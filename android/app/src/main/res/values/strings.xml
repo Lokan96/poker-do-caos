@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Poker do Caos</string>
+    <string name="title_activity_main">Poker do Caos</string>
+    <string name="package_name">com.pokerdocaos.app</string>
+    <string name="custom_url_scheme">com.pokerdocaos.app</string>
+</resources>

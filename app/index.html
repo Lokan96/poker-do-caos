@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pôquer do Caos</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b3d2e">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==================== PANTALLA DE INICIO ==================== -->
+  <main id="pantalla-inicio" class="pantalla">
+    <div class="logo">
+      <h1>🃏 PÔQUER DO CAOS</h1>
+      <p class="lema">O jogo de pôquer que não respeita nenhuna regra</p>
+    </div>
+    <div class="caja-inicio">
+      <p class="desc">
+        Sobreviva a <strong>8 chefões caóticos</strong> armando as mãos de pôquer
+        mais absurdas que conseguir. Combine <strong>Coringas</strong> loucas,
+        exploda pontos e proclame-se <strong>Rei do Boteco</strong>.
+      </p>
+      <label class="etiqueta" for="input-nome">Qual é seu nome, jogador?</label>
+      <input id="input-nome" class="campo" type="text" maxlength="15"
+             placeholder="Escreva seu nome aqui..." autocomplete="off">
+      <button id="btn-jogar" class="boton grande" disabled>ENTRAR NO BOTECO</button>
+      <button id="btn-como" class="boton fantasma">📖 COMO SE JOGA</button>
+      <div id="caixa-como" class="caixa-como oculta">
+        <ol>
+          <li>Você recebe <b>8 cartas</b>. Toque de <b>1 a 5</b> para armar uma mão.</li>
+          <li>Toque <b>JOGAR MÃO</b>: a pontuação é <i>fichas × multiplicador</i>.</li>
+          <li>Cada tipo de mão (Par, Trinca, Sequência, Cor...) tem suas fichas e seu ×mult.</li>
+          <li>Alcance o <b>alvo do chefão</b> antes de ficar sem mãos.</li>
+          <li>Ganhe dinheiro, compre <b>Coringas</b> e <b>cartas melhoradas</b>, gire a <b>Roleta do Caos</b>.</li>
+          <li>Vença os 8 chefões... se o Caos não te vencer primeiro. 😈</li>
+        </ol>
+      </div>
+      <div id="records-inicio" class="records oculta"></div>
+    </div>
+  </main>
+
+  <!-- ==================== PANTALLA DE JUEGO (BLIND) ==================== -->
+  <main id="pantalla-juego" class="pantalla oculta">
+    <header class="barra-superior">
+      <div class="dato">👤 <span id="txt-nome">---</span></div>
+      <div class="dato">💰 <span id="txt-dinheiro">0</span></div>
+      <div class="dato">👹 <span id="txt-ronda">1</span>/8</div>
+    </header>
+
+    <section class="tarjeta-jefe" id="tarjeta-jefe">
+      <div class="jefe-emoji" id="jefe-emoji">🧢</div>
+      <div class="jefe-cuerpo">
+        <div class="jefe-nombre" id="jefe-nombre">Chefão</div>
+        <div class="jefe-regla" id="jefe-regla">Regra...</div>
+      </div>
+      <div class="jefe-alvo">
+        <span class="alvo-puntos" id="txt-puntos">0</span>
+        <span class="alvo-sep">/</span>
+        <span class="alvo-objetivo" id="txt-alvo">300</span>
+      </div>
+      <div class="barra-progresso"><div id="barra-progresso" class="relleno"></div></div>
+    </section>
+
+    <section class="info-blind">
+      <div class="chip-info">🃏 Mãos: <b id="txt-manos">4</b></div>
+      <div class="chip-info">🗑️ Descartes: <b id="txt-descartes">3</b></div>
+      <div class="chip-info">🎴 <b id="txt-coringas">0</b> Coringas</div>
+    </section>
+
+    <section class="zona-mano">
+      <h3>Sua mão — toque as cartas para selecionar</h3>
+      <div id="mano-juego" class="mano-juego"></div>
+    </section>
+
+    <section class="zona-seleccion">
+      <h3>Selecionadas (<span id="txt-select">0</span>/5)</h3>
+      <div id="mano-seleccion" class="mano-seleccion"></div>
+    </section>
+
+    <section class="acciones">
+      <button id="btn-jogar-mano" class="boton grande" disabled>🔥 JOGAR MÃO</button>
+      <button id="btn-descartar" class="boton secundario" disabled>🗑️ DESCARTAR</button>
+      <button id="btn-ordenar" class="boton secundario">🔤 ORDENAR</button>
+    </section>
+
+    <section class="log" id="log-juego"></section>
+  </main>
+<!-- ==================== LOJA DO BOTECO ==================== -->
+  <main id="pantalla-tienda" class="pantalla oculta">
+    <header class="barra-superior">
+      <div class="dato">👤 <span id="txt-nome-tienda">---</span></div>
+      <div class="dato">💰 <span id="txt-dinheiro-tienda">0</span></div>
+      <div class="dato">🛒 LOJA</div>
+    </header>
+
+    <h2 class="titulo-loja">🛒 LOJA DO BOTECO</h2>
+    <p class="subtitulo-loja">Compre Coringas, melhore suas cartas e suba o nível das mãos.</p>
+
+    <div class="seccion-oferta">
+      <h3>🎭 Coringas à venda</h3>
+      <div id="ofertas-coringas" class="grade-ofertas"></div>
+    </div>
+
+    <div class="seccion-oferta">
+      <h3>⭐ Cartas melhoradas</h3>
+      <p class="dica">A melhoria é aplicada à primeira carta da sua próxima mão.</p>
+      <div id="ofertas-mejoradas" class="grade-ofertas"></div>
+    </div>
+
+    <div class="seccion-oferta">
+      <h3>📈 Subir nível de mão ($2)</h3>
+      <p class="dica">+10 fichas e +1 ×mult por nível naquele tipo de mão.</p>
+      <div id="grade-niveis" class="grade-niveis"></div>
+    </div>
+
+    <div class="seccion-oferta">
+      <h3>🗃️ Seus Coringas (<span id="txt-slots">0</span>/5)</h3>
+      <div id="mis-coringas" class="mis-coringas"></div>
+    </div>
+
+    <button id="btn-continuar" class="boton continuar">▶ CONTINUAR PARA O PRÓXIMO CHEFÃO</button>
+  </main>
+
+  <!-- ==================== PANTALLA FINAL ==================== -->
+  <main id="pantalla-fin" class="pantalla oculta">
+    <div class="fin-contenedor">
+      <div id="fin-emoji" class="fin-emoji">💀</div>
+      <h2 id="fin-titulo" class="fin-titulo">FIM DE JOGO</h2>
+      <div id="fin-info" class="fin-info"></div>
+      <button id="btn-reiniciar" class="boton grande">🔄 NOVA PARTIDA</button>
+    </div>
+  </main>
+
+  <!-- ==================== OVERLAY: PUNTAJE ==================== -->
+  <div id="overlay-puntaje" class="overlay oculta">
+    <div class="puntaje-pop" id="puntaje-pop">
+      <div id="pop-mao" class="pop-mao">PAR</div>
+      <div id="pop-detalle" class="pop-detalle"></div>
+      <div id="pop-puntos" class="pop-puntos">0</div>
+      <button id="btn-fechar-puntaje" class="boton">CONTINUAR</button>
+    </div>
+  </div>
+
+  <!-- ==================== OVERLAY: ROLETA DO CAOS ==================== -->
+  <div id="overlay-ruleta" class="overlay oculta">
+    <div class="caixa-ruleta">
+      <h2>🎰 ROLETA DO CAOS</h2>
+      <p class="dica">Venceu o chefão! Gire e veja o que o caos reserva...</p>
+      <div class="ruleta-flecha">▼</div>
+      <div id="pista-ruleta" class="pista-ruleta">
+        <div id="tira-ruleta" class="tira-ruleta"></div>
+      </div>
+      <button id="btn-girar" class="boton grande">🎲 GIRAR</button>
+      <div id="ruleta-resultado" class="ruleta-resultado"></div>
+      <button id="btn-fechar-ruleta" class="boton fantasma oculta">OK, IR À LOJA ➜</button>
+    </div>
+  </div>
+
+  <!-- ==================== OVERLAY: CONFETI ==================== -->
+  <div id="capa-confeti" class="capa-confeti oculta"></div>
+
+  <script src="logica.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

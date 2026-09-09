@@ -1,0 +1,11 @@
+{
+  "appId": "com.pokerdocaos.app",
+  "appName": "Pôquer do Caos",
+  "webDir": "app",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#072a20"
+  }
+}

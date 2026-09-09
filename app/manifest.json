@@ -1,0 +1,16 @@
+{
+  "name": "Pôquer do Caos",
+  "short_name": "PôquerCaos",
+  "description": "Jogo de pôquer caótico: sobreviva a 8 chefões armando mãos absurdas com Coringas brasileiras.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0b3d2e",
+  "background_color": "#072a20",
+  "icons": [
+    { "src": "icons/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icono-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

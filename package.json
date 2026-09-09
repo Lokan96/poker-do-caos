@@ -1,0 +1,21 @@
+{
+  "name": "poker-do-caos",
+  "version": "1.0.0",
+  "description": "Pôquer do Caos — jogo de pôquer caótico em estilo Balatro (projeto escolar)",
+  "private": true,
+  "scripts": {
+    "test": "node tools/test_logica.js && node tools/chequear_ids.js && node tools/smoke_jsdom.js",
+    "simular": "node tools/simular_partida.js 200",
+    "iconos": "python tools/generar_iconos.py",
+    "apk:local": "npx cap sync android && cd android && gradlew assembleRelease",
+    "cap:sync": "npx cap sync android"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/core": "^8.5.1"
+  }
+}
