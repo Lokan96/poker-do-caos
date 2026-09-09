@@ -29,11 +29,11 @@ jobs:
       - name: Sincronizar projeto Android
         run: npx cap sync android
 
-      - name: Compilar APK (Release)
+      - name: Compilar APK (Debug, assinado automaticamente)
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
+          ./gradlew assembleDebug --no-daemon
         env:
           GRADLE_OPTS: -Dorg.gradle.daemon=false
 
@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PokerDoCaos-APK
-          path: android/app/build/outputs/apk/release/*.apk
+          path: android/app/build/outputs/apk/debug/*.apk

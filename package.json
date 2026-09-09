@@ -7,7 +7,7 @@
     "test": "node tools/test_logica.js && node tools/chequear_ids.js && node tools/smoke_jsdom.js",
     "simular": "node tools/simular_partida.js 200",
     "iconos": "python tools/generar_iconos.py",
-    "apk:local": "npx cap sync android && cd android && gradlew assembleRelease",
+    "apk:local": "npx cap sync android && cd android && gradlew assembleDebug",
     "cap:sync": "npx cap sync android"
   },
   "devDependencies": {
