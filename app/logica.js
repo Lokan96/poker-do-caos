@@ -419,12 +419,18 @@
      7. ROLETA DO CAOS (sorteio pós-vitória)
      ------------------------------------------------------------------ */
   const ROLETA = [
-    { id: 'dinheiroExtra',  nome: '+$8 de bonificação',                icone: '💰' },
-    { id: 'maoExtra',       nome: '+1 mão no próximo chefão',          icone: '🃏' },
-    { id: 'coringaGratis',  nome: 'Coringa aleatório GRÁTIS',          icone: '🎁' },
-    { id: 'pontosDobrados', nome: 'Pontuação dobra no próximo chefão', icone: '🔥' },
-    { id: 'ofertasOuro',    nome: 'Carta de Ouro grátis na loja',      icone: '🪙' },
-    { id: 'nada',           nome: 'O caos não te deu nada...',         icone: '🌪️' }
+    { id: 'dinheiroExtra',  nome: '+$8 de bonificação',                icone: '💰',
+      desc: 'Você recebe R$8 extra na hora.' },
+    { id: 'maoExtra',       nome: '+1 mão no próximo chefão',          icone: '🃏',
+      desc: 'No próximo chefão, você terá 1 mão a mais.' },
+    { id: 'coringaGratis',  nome: 'Coringa aleatório GRÁTIS',          icone: '🎁',
+      desc: 'Um Coringa aleatório entra no seu baralho (se houver espaço).' },
+    { id: 'pontosDobrados', nome: 'Pontuação dobra no próximo chefão', icone: '🔥',
+      desc: 'No próximo chefão, a pontuação vale o dobro.' },
+    { id: 'ofertasOuro',    nome: 'Carta de Ouro grátis na loja',      icone: '🪙',
+      desc: 'Na próxima loja, uma Carta de Ouro será gratuita.' },
+    { id: 'nada',           nome: 'O caos não te deu nada...',         icone: '🌪️',
+      desc: 'O caos não te deu nada. Azar.' }
   ];
 
   /* ------------------------------------------------------------------

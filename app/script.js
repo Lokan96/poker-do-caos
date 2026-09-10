@@ -432,9 +432,11 @@
       el.className = 'segmento-ruleta';
       el.style.background = cores[i % cores.length];
       el.innerHTML = '<div class="seg-icone">' + seg.icone + '</div><div>' + seg.nome + '</div>';
-      el.dataset.id = seg.id;
+      el.setAttribute('data-id', seg.id);
       tira.appendChild(el);
     });
+    // Garante a largura total da tira mesmo se o flex do CSS falhar (WebView antigos)
+    tira.style.width = (dobla.length * LARGURA_SEGMENTO) + 'px';
   }
 
   function mostrarRuleta() {
@@ -450,7 +452,7 @@
     const tira = $('tira-ruleta');
     const indice = aleatorio(0, LOGICA.ROLETA.length - 1);
     const alvoVisual = indice + LOGICA.ROLETA.length;
-    const pistaAncho = $('pista-ruleta').clientWidth || 320;
+    const pistaAncho = $('pista-ruleta').clientWidth || Math.max(280, window.innerWidth - 40);
     const rotações = aleatorio(2, 4) * LOGICA.ROLETA.length;
     const dest = -(alvoVisual * LARGURA_SEGMENTO + LARGURA_SEGMENTO / 2 - pistaAncho / 2) - rotações * LARGURA_SEGMENTO;
 
@@ -460,7 +462,8 @@
     setTimeout(function () {
       const r = LOGICA.ROLETA[indice];
       aplicarRoleta(r);
-      $('ruleta-resultado').textContent = r.icone + ' ' + r.nome;
+      $('ruleta-resultado').innerHTML =
+        '<b>' + r.icone + ' ' + r.nome + '</b><br><span class="ruleta-legenda">' + r.desc + '</span>';
       $('btn-girar').classList.add('oculta');
       $('btn-fechar-ruleta').classList.remove('oculta');
     }, 3600);

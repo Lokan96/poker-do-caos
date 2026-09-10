@@ -611,6 +611,8 @@ body {
   position: absolute;
   left: 0;
   top: 0;
+  width: auto;
+  min-width: 100%;
   transition: left 3.4s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: left;
 }
@@ -638,7 +640,17 @@ body {
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--dourado-claro);
-  min-height: 1.6rem;
+  min-height: 2.6rem;
+  text-align: center;
+}
+
+.ruleta-resultado .ruleta-legenda {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--creme);
+  line-height: 1.35;
+  margin-top: 0.15rem;
 }
 
 /* ---------- Confete ---------- */
