@@ -4,10 +4,13 @@ on:
   workflow_dispatch:
   push:
     branches: [main, master]
+    tags: ['v*']
 
 jobs:
   compilar-apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -42,3 +45,27 @@ jobs:
         with:
           name: PokerDoCaos-APK
           path: android/app/build/outputs/apk/debug/*.apk
+
+      - name: Renomear APK para nome bonito (só release)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          ls android/app/build/outputs/apk/debug/
+          cp android/app/build/outputs/apk/debug/app-debug.apk PokerDoCaos-${GITHUB_REF_NAME}.apk
+
+      - name: Publicar Release (só em tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: PokerDoCaos-${GITHUB_REF_NAME}.apk
+          name: "Pôquer do Caos ${GITHUB_REF_NAME}"
+          body: |
+            Release ${GITHUB_REF_NAME} do Pôquer do Caos.
+            APK Android (debug assinado) para instalação direta.
+
+            ## Como instalar
+            1. Baixe o APK e envie-o ao celular (WhatsApp/Drive/cable);
+            2. Toque no arquivo e permita "Instalar de fonte desconocida";
+            3. Jogue offline. 🎰
+
+            O código fonte completo está neste repositório (`app/`, `tools/`, `android/`).
+            Relatório escolar: `relatorio.md` / `relatorio.docx`.
