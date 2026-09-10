@@ -10,3 +10,5 @@ android/app/src/main/assets/public/xcassets/
 .DS_Store
 Thumbs.db
 .snapshots/
+
+tools/rel_log.txt
