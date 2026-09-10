@@ -46,20 +46,21 @@ jobs:
           name: PokerDoCaos-APK
           path: android/app/build/outputs/apk/debug/*.apk
 
-      - name: Renomear APK para nome bonito (só release)
+      - name: Preparar datos da release (só em tags)
+        id: release
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           ls android/app/build/outputs/apk/debug/
-          cp android/app/build/outputs/apk/debug/app-debug.apk PokerDoCaos-${GITHUB_REF_NAME}.apk
+          echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
 
       - name: Publicar Release (só em tags)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: PokerDoCaos-${GITHUB_REF_NAME}.apk
-          name: "Pôquer do Caos ${GITHUB_REF_NAME}"
+          files: android/app/build/outputs/apk/debug/*.apk
+          name: "Pôquer do Caos ${{ steps.release.outputs.tag }}"
           body: |
-            Release ${GITHUB_REF_NAME} do Pôquer do Caos.
+            Release ${{ steps.release.outputs.tag }} do Pôquer do Caos.
             APK Android (debug assinado) para instalação direta.
 
             ## Como instalar
