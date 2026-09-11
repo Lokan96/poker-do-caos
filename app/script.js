@@ -282,6 +282,8 @@
     $('btn-jogar-mano').disabled = sel < 1 || sel > 5 || E.manos <= 0;
     $('btn-descartar').disabled = sel < 1 || E.descartes <= 0;
     $('btn-descartar').textContent = '🗑️ DESCARTAR' + (custoDescarte() > 0 ? ' (-R$' + custoDescarte() + ')' : '');
+    // ORDENAR nunca fica preso: sempre reabilitado fora da contagem
+    $('btn-ordenar').disabled = false;
   }
 
   function criarElementoCarta(carta, selecionada) {
@@ -657,15 +659,16 @@
       el.setAttribute('data-id', seg.id);
       tira.appendChild(el);
     });
-    // Garante a largura total da tira mesmo se o flex do CSS falhar (WebView antigos)
+    // Largura total fixa: os segmentos não dependem de flex para existir
     tira.style.width = (dobla.length * LARGURA_SEGMENTO) + 'px';
   }
 
   function mostrarRuleta() {
     montarTira();
-    $('tira-ruleta').style.left = '0px';
+    $('tira-ruleta').style.transform = 'translateX(0px)';
     $('ruleta-resultado').textContent = '';
     $('btn-girar').classList.remove('oculta');
+    $('btn-girar').disabled = false;
     $('btn-fechar-ruleta').classList.add('oculta');
     $('overlay-ruleta').classList.remove('oculta');
   }
@@ -674,21 +677,36 @@
     const tira = $('tira-ruleta');
     const indice = aleatorio(0, LOGICA.ROLETA.length - 1);
     const alvoVisual = indice + LOGICA.ROLETA.length;
-    const pistaAncho = $('pista-ruleta').clientWidth || Math.max(280, window.innerWidth - 40);
+    // largura da pista com guarda: se o WebView não medir, usa a tela menos margens
+    const pistaAncho = $('pista-ruleta').clientWidth ||
+      Math.max(280, (window.innerWidth || 360) - 40);
     const rotações = aleatorio(2, 4) * LOGICA.ROLETA.length;
-    const dest = -(alvoVisual * LARGURA_SEGMENTO + LARGURA_SEGMENTO / 2 - pistaAncho / 2) - rotações * LARGURA_SEGMENTO;
+    const dest = -(alvoVisual * LARGURA_SEGMENTO + LARGURA_SEGMENTO / 2 - pistaAncho / 2) -
+      rotações * LARGURA_SEGMENTO;
 
-    tira.style.left = dest + 'px';
+    $('btn-girar').disabled = true;
     Som.ruleta();
 
-    setTimeout(function () {
-      const r = LOGICA.ROLETA[indice];
-      aplicarRoleta(r);
-      $('ruleta-resultado').innerHTML =
-        '<b>' + r.icone + ' ' + r.nome + '</b><br><span class="ruleta-legenda">' + r.desc + '</span>';
-      $('btn-girar').classList.add('oculta');
-      $('btn-fechar-ruleta').classList.remove('oculta');
-    }, 3600);
+    // Animação por requestAnimationFrame com transform (sem CSS transition nem left:
+    // funciona em qualquer WebView, mesmo os que não animam propriedades de layout)
+    const duracao = 3400;
+    const inicio = Date.now();
+    function easeFora(t) { return 1 - Math.pow(1 - t, 3); }
+    function quadro() {
+      const t = Math.min(1, (Date.now() - inicio) / duracao);
+      tira.style.transform = 'translateX(' + Math.round(dest * easeFora(t)) + 'px)';
+      if (t < 1) {
+        requestAnimationFrame(quadro);
+      } else {
+        const r = LOGICA.ROLETA[indice];
+        aplicarRoleta(r);
+        $('ruleta-resultado').innerHTML =
+          '<b>' + r.icone + ' ' + r.nome + '</b><br><span class="ruleta-legenda">' + r.desc + '</span>';
+        $('btn-girar').classList.add('oculta');
+        $('btn-fechar-ruleta').classList.remove('oculta');
+      }
+    }
+    requestAnimationFrame(quadro);
   }
 
   function aplicarRoleta(r) {

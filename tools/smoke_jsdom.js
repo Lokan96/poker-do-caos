@@ -94,6 +94,7 @@ async function run() {
     doc.getElementById('barra-progresso').style.width !== '0%' &&
     doc.getElementById('barra-progresso').style.width !== '',
     'width=' + doc.getElementById('barra-progresso').style.width);
+  verificar('ORDENAR reabilitado após a contagem', doc.getElementById('btn-ordenar').disabled === false);
 
   // 6) Fecha o overlay e joga até vencer o blind 1 ou perder
   let hands = 1;
@@ -142,6 +143,8 @@ async function run() {
     await esperar(3900);
     const resultado = doc.getElementById('ruleta-resultado').textContent;
     verificar('Roleta deu um resultado', resultado.length > 0, 'resultado=' + resultado);
+    verificar('Roleta desenha 12 segmentos', doc.getElementById('tira-ruleta').children.length === 12,
+      'segmentos=' + doc.getElementById('tira-ruleta').children.length);
 
     const btnFecharRuleta = doc.getElementById('btn-fechar-ruleta');
     if (!btnFecharRuleta.classList.contains('oculta')) btnFecharRuleta.click();

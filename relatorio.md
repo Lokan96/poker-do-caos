@@ -285,7 +285,13 @@ Cada chefão tem **falas em 4 momentos** (balão de fala no cartão + registro n
 ### 16.5 Contagem de pontos à Balatro
 A antiga "letra miúda" do resultado virou matemática viva: fichas e ×mult pulsam na tela, cada carta ativa uma a uma, os Coringas disparam em sequência (tremendo na fileira) e o total **explode** ao final — com novos efeitos sonoros e um toque que acelera a contagem.
 
-**Validação do Ato 2:** 53 testes unitários, 20 verificações de interface e calibração com 1.000 partidas simuladas.
+### 16.6 Manutenção — v0.2.1 (correções de bugs)
+- **Roleta reescrita à prova de WebView**: a animação deixou de depender de `flex` + `transition: left` (frágil em WebView antigo) e passou a usar **`requestAnimationFrame` com `transform: translateX`** — funciona em qualquer navegador/WebView. A pista também ganhou fundo listrado para nunca parecer vazia;
+- **Botão ORDENAR**: depois da contagem animada ele ficava travado para sempre (só JOGAR/DESCARTAR eram reabilitados) — agora os 3 botões são reabilitados corretamente;
+- **Chefão maior**: o emoji do chefão cresceu de 2,4rem para `clamp(2,6rem, 11vw, 3,8rem)` no cartão;
+- Validado com as 2 novas verificações de interface (ORDENAR reabilitado + roleta com 12 segmentos).
+
+**Validação do Ato 2:** 53 testes unitários, 22 verificações de interface e calibração com 1.000 partidas simuladas.
 
 
 
