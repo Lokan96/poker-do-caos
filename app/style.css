@@ -689,3 +689,182 @@ body {
   .pantalla { max-width: 720px; padding-top: 2rem; }
   .zona-mano, .zona-seleccion { width: 100%; }
 }
+
+/* ---------- ATO 2: Coringas na mão, matemática viva, falas e roguelite ---------- */
+.tira-coringas {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0.2rem 0 0.4rem;
+}
+
+.coringa-mini {
+  font-size: 1.25rem;
+  line-height: 1;
+  background: rgba(212, 160, 23, 0.12);
+  border: 1px solid var(--dourado);
+  border-radius: 8px;
+  padding: 0.18rem 0.4rem;
+}
+
+.coringa-mini.treme { animation: tremeCoringa 0.32s; }
+
+@keyframes tremeCoringa {
+  0%, 100% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-5px) scale(1.2); }
+  60% { transform: translateY(2px) scale(1.05); }
+}
+
+/* Caixa da matemática (fichas × mult) */
+.caixa-matematica {
+  margin: 0.4rem 0;
+  padding: 0.55rem;
+  border: 2px dashed var(--dourado);
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.fila-mat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.contador {
+  display: inline-block;
+  min-width: 3.2rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.contador.fichas {
+  background: #1c6e5c;
+  color: #fff;
+  border: 2px solid var(--dourado-claro);
+}
+
+.contador.mult {
+  background: #8a1c1c;
+  color: #fff;
+  border: 2px solid #f0c94a;
+}
+
+.contador.total {
+  margin-top: 0.35rem;
+  font-size: 1.6rem;
+  background: var(--dourado-claro);
+  color: #072a20;
+  border: 3px solid #fff;
+}
+
+.vez { font-size: 1.4rem; font-weight: 900; color: var(--creme); }
+
+.math-nota {
+  min-height: 1.2rem;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--dourado-claro);
+}
+
+.pulso { animation: pulsoCont 0.28s; }
+
+@keyframes pulsoCont {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+
+.estoura { animation: estouraTotal 0.5s; }
+
+@keyframes estouraTotal {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.1); box-shadow: 0 0 26px var(--dourado-claro); }
+  100% { transform: scale(1); }
+}
+
+/* Balão de fala dos chefões */
+.jefe-fala {
+  margin-top: 0.45rem;
+  background: var(--creme);
+  color: #072a20;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 10px;
+  position: relative;
+  text-align: left;
+}
+
+.jefe-fala::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 22px;
+  border: 7px solid transparent;
+  border-bottom-color: var(--creme);
+  border-top: 0;
+}
+
+.fala-pop { animation: pulsoCont 0.35s; }
+
+/* Toast de desbloqueio */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.2rem;
+  transform: translateX(-50%);
+  max-width: 92%;
+  background: var(--dourado-claro);
+  color: #072a20;
+  font-weight: 800;
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  border: 2px solid #fff;
+  box-shadow: 0 6px 18px var(--sombra);
+  z-index: 60;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.toast-pop { animation: sobeToast 0.4s; }
+
+@keyframes sobeToast {
+  from { opacity: 0; transform: translateX(-50%) translateY(14px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Caixa do Boteco (desbloqueios permanentes) */
+.caixa-desbloqueios {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+  text-align: left;
+  margin-top: 0.4rem;
+}
+
+.desbloqueio {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(212, 160, 23, 0.4);
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.desbloqueio b { color: var(--dourado-claro); }
+
+.desbloqueio p {
+  margin-top: 0.15rem;
+  color: var(--creme);
+  opacity: 0.85;
+}
+
+.desbloqueio.aberto {
+  border-color: var(--dourado-claro);
+  background: rgba(212, 160, 23, 0.12);
+}

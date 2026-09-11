@@ -56,7 +56,7 @@ function jogarPartida() {
     let manoJuego = L.comprar(baralho, 8);
     let manos = (jefe.reglaId === 'menosMaos' ? 3 : 4) + bonus.maoExtra;
     if (coringas.some(c => c.tipo === 'maoExtra')) manos += 1;
-    let descartes = 3 + (coringas.some(c => c.tipo === 'descarteExtra') ? 2 : 0);
+    let descartes = 3 + (coringas.some(c => c.tipo === 'descarteExtra') ? 1 : 0);
     let pontos = 0;
     bonus.maoExtra = 0;
 
@@ -69,7 +69,6 @@ function jogarPartida() {
       pontos += p;
       nivelMano[melhor.mao.clave] = (nivelMano[melhor.mao.clave] || 0) + 1;
       dinheiro += melhor.dinheiroEncontrado;
-      dinheiro += Math.min(coringas.filter(c => c.tipo === 'dinheiroPorMao').length, 1); // Tio Patinhas
 
       manoJuego = manoJuego.filter(c => melhor.idCartas.indexOf(c.id) === -1);
       manoJuego = manoJuego.concat(L.comprar(baralho, melhor.idCartas.length));
@@ -83,21 +82,24 @@ function jogarPartida() {
     // Ganó el blind: prêmio + roleta (aleatória) + compras simples
     let premio = L.PREMIO_POR_JEFE[ronda];
     if (coringas.some(c => c.tipo === 'dinheiroPorBlindEMenosMult')) premio += 3;
+    premio += coringas.filter(c => c.tipo === 'dinheiroPorChefao').length * 2; // Tio Patinhas
     dinheiro += premio;
+    dinheiro += Math.min(4, Math.floor(dinheiro / 10)); // juros do caixa
 
     const roleta = Math.floor(Math.random() * L.ROLETA.length);
     const efeito = L.ROLETA[roleta].id;
     if (efeito === 'dinheiroExtra') dinheiro += 8;
     if (efeito === 'maoExtra') bonus.maoExtra += 1;
     if (efeito === 'pontosDobrados') bonus.pontosDobrados = 2;
-    if (efeito === 'coringaGratis' && coringas.length < 5) {
-      coringas.push(Object.assign({}, L.CORINGAS[Math.floor(Math.random() * L.CORINGAS.length)]));
+    if (efeito === 'coringaGratis' && coringas.length < 4) {
+      const pool = L.CORINGAS.filter(c => !c.raro);
+      coringas.push(Object.assign({}, pool[Math.floor(Math.random() * pool.length)]));
     }
 
-    // Loja: comprar coringas acessibles até encher slots
-    const ofertas = L.CORINGAS.slice();
+    // Loja: comprar coringas acessibles até encher os 4 slots
+    const ofertas = L.CORINGAS.filter(c => !c.raro).slice();
     let comprados = 0;
-    while (comprados < 3 && coringas.length < 5 && ofertas.length) {
+    while (comprados < 3 && coringas.length < 4 && ofertas.length) {
       // maior valor de coringa que podemos pagar? compra o 1º aleatório acessible menor que dinheiro
       const i = Math.floor(Math.random() * ofertas.length);
       const oferta = ofertas.splice(i, 1)[0];
@@ -107,14 +109,14 @@ function jogarPartida() {
         comprados++;
       }
     }
-    // Melhora a mão mais usada se sobra dinheiro
+    // Melhora a mão mais usada com o que sobrar (custo progressivo)
     let melhorClave = 'par';
     let maxNivel = -1;
     Object.keys(nivelMano).forEach(clave => {
       if (nivelMano[clave] > maxNivel) { maxNivel = nivelMano[clave]; melhorClave = clave; }
     });
-    while (dinheiro >= 2) {
-      dinheiro -= 2;
+    while (dinheiro >= L.custoNivel(nivelMano[melhorClave])) {
+      dinheiro -= L.custoNivel(nivelMano[melhorClave]);
       nivelMano[melhorClave]++;
     }
   }

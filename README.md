@@ -46,8 +46,13 @@ Cada etapa está detalhada em `relatorio.md` (versão entregue: `relatorio.docx`
 ## ✨ Recursos
 
 - **10 combinações de pôquer** (Carta Alta até Royal Flush), cada uma com fichas e multiplicador;
-- **13 Coringas brasileiros** com efeitos que quebram regras (Carnavalesco, Feijoada, Loteria, Capivara Zen...);
-- **8 chefões com regras caóticas** ("Cor não vale como Cor", "todas as cartas valem 10", "multiplicador aleatório por mão"...);
+- **16 Coringas brasileiros** com efeitos que quebram regras (Carnavalesco, Feijoada, Loteria, Capivara Zen...) — 3 raros só entram na loja com o desbloqueio "Colecionador";
+- **8 chefões com regras caóticas** ("Cor não vale como Cor", "todas as cartas valem 10", "multiplicador aleatório por mão"...) e alvos escalando de 300 até **150.000** pontos;
+- **Contagem de pontos à Balatro**: fichas e ×mult pulsam na tela, cada carta ativa uma a uma, os Coringas disparam em sequência e o total **explode** ao final;
+- **Falas dos chefões** em 4 momentos: entrada, 75% do alvo, sua vitória e sua derrota;
+- **Caixa do Boteco (roguelite)**: 7 desbloqueios permanentes que a derrota libera (mais dinheiro inicial, Coringa de graça, juros maiores, Coringas raros...);
+- **Economia de boteco**: juros do caixa (+$1 por $10 guardados) e custo de nível progressivo ($2 + $1 a cada 2 níveis);
+- **4 espaços de Coringa** (não 5): +2 espaços compráveis na loja por $10 (estilo voucher do Balatro);
 - **Níveis de mão**: repetir uma combinação a deixa permanentemente mais forte;
 - **Loja**: Coringas, cartas melhoradas (Ouro, Fogo, Biônica, Espelho) e upgrade de mãos;
 - **Roleta do Caos** com 6 prêmios aleatórios após cada vitória;
@@ -238,10 +243,10 @@ No primeiro teste no celular apareceu um **problema real**: os prêmios da rolet
 
 ## 🧪 Qualidade
 
-- 32 testes unitários da lógica (avaliação de mãos, Coringas, regras dos chefões);
+- 53 testes unitários da lógica (avaliação de mãos, Coringas, regras dos chefões, juros, linha do tempo da pontuação);
 - Verificação automática de que todo ID referenciado no JS existe no HTML;
-- Teste de fumaça da interface com jsdom (fluxo completo: iniciar → jogar mão → vencer → loja);
-- Balanceamento verificado com 200 partidas simuladas (Monte Carlo).
+- Teste de fumaça da interface com jsdom (fluxo completo: iniciar → contagem animada → vencer → loja);
+- Balanceamento calibrado com 1.000 partidas simuladas (Monte Carlo): a taxa de vitória da IA perfeita caiu de 98% (antes do Ato 2) para **26%**.
 
 ## 📄 Licença e contexto
 

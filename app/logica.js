@@ -170,32 +170,38 @@
      4. CORINGAS (efeitos caóticos) e CARTAS MELHORADAS
      ------------------------------------------------------------------ */
   const CORINGAS = [
-    { id: 'carnaval',    nome: 'Coringa Carnavalesco', icone: '🎭', preco: 6,  tipo: 'multPorCartasVermelhas', valor: 2,
-      desc: '+2 ×mult por cada carta vermelha (♦♥) jogada.' },
-    { id: 'feijoada',    nome: 'Coringa da Feijoada',   icone: '🍲', preco: 6,  tipo: 'fichasSeCincoCartas', valor: 35,
-      desc: '+35 fichas se você jogar 5 cartas.' },
-    { id: 'samba',       nome: 'Coringa do Samba',      icone: '🥁', preco: 7,  tipo: 'multSeCorOuSequencia', valor: 5,
-      desc: '+5 ×mult se a mão for Cor ou Sequência.' },
-    { id: 'loteria',     nome: 'Coringa Loteria',       icone: '🎟️', preco: 8,  tipo: 'chanceTriplicar', valor: 0.25,
-      desc: '25% de chance de TRIPLICAR a pontuação da mão.' },
-    { id: 'onca',        nome: 'Coringa Onça Pintada',  icone: '🐆', preco: 7,  tipo: 'multSeTresNaipes', valor: 6,
-      desc: '+6 ×mult se a mão tiver 3 ou mais naipes diferentes.' },
-    { id: 'futebol',     nome: 'Coringa Futebola',      icone: '⚽', preco: 5,  tipo: 'fichasSeTresCartas', valor: 60,
-      desc: '+60 fichas se você jogar exatamente 3 cartas.' },
-    { id: 'tioPatinhas', nome: 'Coringa Tio Patinhas',  icone: '💰', preco: 5,  tipo: 'dinheiroPorMao', valor: 1,
-      desc: '+$1 por mão jogada (dinheiro instantâneo).' },
+    { id: 'carnaval',    nome: 'Coringa Carnavalesco', icone: '🎭', preco: 5,  tipo: 'multPorCartasVermelhas', valor: 1,
+      desc: '+1 ×mult por cada carta vermelha (♦♥) jogada.' },
+    { id: 'feijoada',    nome: 'Coringa da Feijoada',   icone: '🍲', preco: 6,  tipo: 'fichasSeCincoCartas', valor: 50,
+      desc: '+50 fichas se você jogar 5 cartas.' },
+    { id: 'samba',       nome: 'Coringa do Samba',      icone: '🥁', preco: 7,  tipo: 'multSeCorOuSequencia', valor: 4,
+      desc: '+4 ×mult se a mão for Cor ou Sequência.' },
+    { id: 'loteria',     nome: 'Coringa Loteria',       icone: '🎟️', preco: 8,  tipo: 'chanceTriplicar', valor: 0.15,
+      desc: '15% de chance de TRIPLICAR a pontuação da mão.' },
+    { id: 'onca',        nome: 'Coringa Onça Pintada',  icone: '🐆', preco: 7,  tipo: 'multSeTresNaipes', valor: 4,
+      desc: '+4 ×mult se a mão tiver 3 ou mais naipes diferentes.' },
+    { id: 'futebol',     nome: 'Coringa Futebola',      icone: '⚽', preco: 5,  tipo: 'fichasSeTresCartas', valor: 45,
+      desc: '+45 fichas se você jogar exatamente 3 cartas.' },
+    { id: 'tioPatinhas', nome: 'Coringa Tio Patinhas',  icone: '💰', preco: 7,  tipo: 'dinheiroPorChefao', valor: 2,
+      desc: '+$2 de bonificação por chefão vencido.' },
     { id: 'caipirinha',  nome: 'Coringa Caipirinha',    icone: '🍹', preco: 4,  tipo: 'dinheiroPorBlindEMenosMult', valor: 1,
       desc: '+$3 por chefão vencido, mas -1 ×mult em todas as mãos.' },
-    { id: 'maracatu',    nome: 'Coringa Maracatu',      icone: '🥁', preco: 6,  tipo: 'multMasDanoDescarte', valor: 10,
-      desc: '+10 ×mult, mas -$1 por descarte usado.' },
-    { id: 'capivara',    nome: 'Coringa Capivara Zen',  icone: '🦫', preco: 8,  tipo: 'maoExtra', valor: 1,
+    { id: 'maracatu',    nome: 'Coringa Maracatu',      icone: '🥁', preco: 6,  tipo: 'multMasDanoDescarte', valor: 5,
+      desc: '+5 ×mult, mas -$1 por descarte usado.' },
+    { id: 'capivara',    nome: 'Coringa Capivara Zen',  icone: '🦫', preco: 9,  tipo: 'maoExtra', valor: 1,
       desc: '+1 mão extra por chefão (blind).' },
     { id: 'bicho',       nome: 'Coringa Jogo do Bicho', icone: '🐛', preco: 7,  tipo: 'cartaAleatoriaDobrada', valor: 0,
       desc: '1 carta aleatória da mão vale dobro (×2).' },
-    { id: 'cafe',        nome: 'Coringa Cafézinho',     icone: '☕', preco: 5,  tipo: 'descarteExtra', valor: 2,
-      desc: '+2 descartes por chefão (blind).' },
-    { id: 'meteoro',     nome: 'Coringa Meteoro',       icone: '☄️', preco: 6,  tipo: 'multSeComecaComPaus', valor: 4,
-      desc: '+4 ×mult se a mão começar com Espadas (♠).' }
+    { id: 'cafe',        nome: 'Coringa Cafézinho',     icone: '☕', preco: 3,  tipo: 'descarteExtra', valor: 1,
+      desc: '+1 descarte por chefão (blind).' },
+    { id: 'meteoro',     nome: 'Coringa Meteoro',       icone: '☄️', preco: 6,  tipo: 'multSeComecaComPaus', valor: 3,
+      desc: '+3 ×mult se a mão começar com Espadas (♠).' },
+    { id: 'feira',       nome: 'Coringa Feira Noturna', icone: '🏮', preco: 9,  tipo: 'multSeQuatroNaipes', valor: 4, raro: true,
+      desc: '+4 ×mult se a mão tiver 4 naipes diferentes.' },
+    { id: 'zorra',       nome: 'Coringa Zorra Total',   icone: '🎲', preco: 7,  tipo: 'zorraPorQualidade', valor: 0, raro: true,
+      desc: '×0,5 em Par/Carta Alta; ×3 em Sequência ou melhor.' },
+    { id: 'fantasma',    nome: 'Coringa Amigo Fantasma',icone: '👻', preco: 6,  tipo: 'chanceMult', valor: 2, raro: true,
+      desc: '50% de chance de +2 ×mult por mão.' }
   ];
 
   const CARTAS_MELHORADAS = [
@@ -210,28 +216,60 @@
   ];
 
   // Dinheiro ganado por vencer cada chefão (índice = chefão - 1)
-  const PREMIO_POR_JEFE = [3, 4, 6, 8, 10, 12, 15, 25];
+  const PREMIO_POR_JEFE = [3, 3, 4, 5, 7, 9, 12, 15];
 
   /* ------------------------------------------------------------------
      5. CHEFÕES (blinds) — 8 desafios com regras caóticas
      ------------------------------------------------------------------ */
   const JEFES = [
     { id: 1,  nome: 'Zé do Controle',     icone: '🧢', alvo: 300,   reglaId: null,
-      regla: 'Regra normal. Aproveite para aprender.' },
-    { id: 2,  nome: 'Galinha dos Ovos',   icone: '🐔', alvo: 700,   reglaId: 'figurasDobradas',
-      regla: 'Figuras (J, Q, K, A) valem o dobro em fichas.' },
-    { id: 3,  nome: 'Baralho Sujo',       icone: '🃏', alvo: 1200,  reglaId: 'semCor',
-      regla: 'A Cor (Flush) NÃO vale como Cor nesta batalha.' },
-    { id: 4,  nome: 'Mão de Gato',        icone: '🐱', alvo: 2000,  reglaId: 'descarteCaro',
-      regla: 'Cada descarte custa $1 (de seu dinheiro).' },
-    { id: 5,  nome: 'Dona Astúcia',       icone: '🎭', alvo: 3200,  reglaId: 'menosMaos',
-      regla: 'Você só tem 3 mãos neste chefão.' },
-    { id: 6,  nome: 'Capivara Relâmpago', icone: '⚡', alvo: 5000,  reglaId: 'sequenciaPotente',
-      regla: 'As Sequências valem ×1,5 nesta batalha.' },
-    { id: 7,  nome: 'A Fera do Caos',     icone: '👹', alvo: 8000,  reglaId: 'todasDez',
-      regla: 'TODAS as cartas valem 10 fichas (ignora melhorias).' },
-    { id: 8,  nome: 'DEUS DO CAOS',       icone: '🌀', alvo: 15000, reglaId: 'multAleatorio',
-      regla: 'Cada mão recebe um multiplicador aleatório entre ×0,5 e ×3.' }
+      regla: 'Regra normal. Aproveite para aprender.',
+      falas: { entrada: 'Bem-vindo ao boteco, novato. Aqui o barato sai caro.',
+               meio: 'Opa... tá quase, hein? Vou simular o juiz.',
+               vitoria: 'Fala baixo que o dono não pode saber...',
+               derrota: 'Volta quando aprender a contar, moleque.' } },
+    { id: 2,  nome: 'Galinha dos Ovos',   icone: '🐔', alvo: 900,   reglaId: 'figurasDobradas',
+      regla: 'Figuras (J, Q, K, A) valem o dobro em fichas.',
+      falas: { entrada: 'Có-có! Aposto meus ovos que você NÃO passa!',
+               meio: 'Có... NÃO! Meus ovinhos!',
+               vitoria: 'Minhas economias... CLUCK... levaram meu ninho.',
+               derrota: 'Cocoricó! Paguei pra ver!' } },
+    { id: 3,  nome: 'Baralho Sujo',       icone: '🃏', alvo: 2500,  reglaId: 'semCor',
+      regla: 'A Cor (Flush) NÃO vale como Cor nesta batalha.',
+      falas: { entrada: 'Este baralho veio do esgoto. Cor aqui não vale nada.',
+               meio: 'Guarda esse flush aí... nadinha, nadinha.',
+               vitoria: 'Você trapaceou melhor que eu. Respeito.',
+               derrota: 'O baralho sujo te sujou de volta.' } },
+    { id: 4,  nome: 'Mão de Gato',        icone: '🐱', alvo: 6500,  reglaId: 'descarteCaro',
+      regla: 'Cada descarte custa $1 (de seu dinheiro).',
+      falas: { entrada: 'Miau. Cada descarte seu me deixa mais rica.',
+               meio: 'Raspando o fundo do pote, eu vejo...',
+               vitoria: 'Purrr... fique com as migalhas.',
+               derrota: 'Miav... até o gato se arrepende.' } },
+    { id: 5,  nome: 'Dona Astúcia',       icone: '🎭', alvo: 12000, reglaId: 'menosMaos',
+      regla: 'Você só tem 3 mãos neste chefão.',
+      falas: { entrada: 'Três mãos, querido. Eu faço minhas com menos.',
+               meio: 'Meu instinto diz que você vai falhar feio.',
+               vitoria: 'A máscara caiu. Nós duas sabemos quem manda.',
+               derrota: 'Leve a vitória, meu anjo. A próxima é minha.' } },
+    { id: 6,  nome: 'Capivara Relâmpago', icone: '⚡', alvo: 22000, reglaId: 'sequenciaPotente',
+      regla: 'As Sequências valem ×1,5 nesta batalha.',
+      falas: { entrada: 'Zzz... hã? Sequências aceleradas? AGORA EU ACORDEI!',
+               meio: 'Bzzt! Veloz demais pra você!',
+               vitoria: 'Zzz... cinco por um. Adivinha quem dorme bem.',
+               derrota: 'Brrr... você é veloz, criaturinha.' } },
+    { id: 7,  nome: 'A Fera do Caos',     icone: '👹', alvo: 55000, reglaId: 'todasDez',
+      regla: 'TODAS as cartas valem 10 fichas (ignora melhorias).',
+      falas: { entrada: 'TUDO VALE 10. SUAS JÓIAS, SUAS ESTRELAS: LIXO.',
+               meio: 'AQUECENDO? EU ACABEI DE ACORDAR.',
+               vitoria: 'O ABISMO DIGERIU SUA ESPERANÇA.',
+               derrota: 'VOLTE QUANDO O CAOS TE CHAMAR DE AMIGO.' } },
+    { id: 8,  nome: 'DEUS DO CAOS',       icone: '🌀', alvo: 150000, reglaId: 'multAleatorio',
+      regla: 'Cada mão recebe um multiplicador aleatório entre ×0,5 e ×3.',
+      falas: { entrada: 'Eu sou as regras que você não leu.',
+               meio: 'O destino rolou os dados... você ouviu?',
+               vitoria: 'Inaceitável. O caos exige recontagem.',
+               derrota: 'Agora você entende: o caos não tem final feliz.' } }
   ];
 /* ------------------------------------------------------------------
      6. PONTUAÇÃO DE UMA MÃO (núcleo do jogo)
@@ -252,10 +290,12 @@
     const coringas = ctx.coringas || [];
     const reglaId = ctx.reglaId || null;
     const niveis = ctx.niveis || Object.assign({}, NIVEIS_MANO);
+    const pasos = []; // linha do tempo da pontuação (alimenta a animação)
 
     // Regra do Baralho Sujo: Cor não conta como Cor
     if (reglaId === 'semCor' && mao.clave === 'cor') {
       mao = MANOS.cartaAlta;
+      pasos.push({ tipo: 'regla', texto: '🃏 Baralho Sujo: a Cor não vale como Cor!' });
     }
 
     const nivel = niveis[mao.clave] || 0;
@@ -263,13 +303,17 @@
     let mult = mao.mult + nivel;
     let fichasCartas = 0;
 
+    pasos.push({ tipo: 'mao', nombre: mao.nombre, fichas: fichas, mult: mult, nivel: nivel });
+
     // --- valor base de cada carta (com regras do chefão) ---
     for (let i = 0; i < cartas.length; i++) {
       const c = cartas[i];
       let valor = c.valor;
+      let nota = null;
 
       if (reglaId === 'figurasDobradas' && ['J', 'Q', 'K', 'A'].indexOf(c.rango) !== -1) {
         valor *= 2;
+        nota = '2× figura';
       }
       if (reglaId === 'todasDez') {
         valor = 10;
@@ -283,17 +327,21 @@
       const melhoriasAtivas = reglaId !== 'todasDez';
       if (melhoriasAtivas && c.melhorada === 'ouro') {
         fichasCartas += valor + 30;
+        nota = '🪙 +30 fichas';
       } else if (melhoriasAtivas && c.melhorada === 'fogo') {
         fichasCartas += valor + 45;
+        nota = '🔥 +45 fichas';
       } else {
         fichasCartas += valor;
       }
+      pasos.push({ tipo: 'carta', idx: i, rango: c.rango, simbolo: c.simbolo,
+                   valor: valor, nota: nota });
     }
 
-    const mensajes = [];
     let fichasExtra = 0;
     let dinheiroEncontrado = 0;
     let triplicar = false;
+    let bonusFinal = 1;
 // --- efeitos dos coringas ---
     for (const cj of coringas) {
       switch (cj.tipo) {
@@ -301,66 +349,107 @@
           const qtd = cartas.filter(c => c.corNaipe === 'vermelho').length;
           if (qtd) {
             mult += qtd * cj.valor;
-            mensajes.push(`🎭 Carnavalesco: +${qtd * cj.valor} ×mult`);
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Carnavalesco', mult: qtd * cj.valor,
+                         texto: '🎭 Carnavalesco: +' + (qtd * cj.valor) + ' ×mult' });
           }
           break;
         }
         case 'fichasSeCincoCartas':
           if (cartas.length === 5) {
             fichasExtra += cj.valor;
-            mensajes.push('🍲 Feijoada: +35 fichas');
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Feijoada', fichas: cj.valor,
+                         texto: '🍲 Feijoada: +' + cj.valor + ' fichas' });
           }
           break;
         case 'fichasSeTresCartas':
           if (cartas.length === 3) {
             fichasExtra += cj.valor;
-            mensajes.push('⚽ Futebola: +60 fichas');
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Futebola', fichas: cj.valor,
+                         texto: '⚽ Futebola: +' + cj.valor + ' fichas' });
           }
           break;
         case 'multSeCorOuSequencia':
           if (mao.clave === 'cor' || mao.clave === 'escalera' ||
               mao.clave === 'escaleraDeCor' || mao.clave === 'escaleraReal') {
             mult += cj.valor;
-            mensajes.push('🥁 Samba: +5 ×mult');
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Samba', mult: cj.valor,
+                         texto: '🥁 Samba: +' + cj.valor + ' ×mult' });
           }
           break;
         case 'multSeTresNaipes': {
-          const naipes = {};
-          cartas.forEach(c => { naipes[c.naipe] = true; });
-          if (Object.keys(naipes).length >= 3) {
+          const naipes3 = {};
+          cartas.forEach(c => { naipes3[c.naipe] = true; });
+          if (Object.keys(naipes3).length >= 3) {
             mult += cj.valor;
-            mensajes.push('🐆 Onça: +6 ×mult (3+ naipes)');
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Onça', mult: cj.valor,
+                         texto: '🐆 Onça: +' + cj.valor + ' ×mult (3+ naipes)' });
+          }
+          break;
+        }
+        case 'multSeQuatroNaipes': {
+          const naipes4 = {};
+          cartas.forEach(c => { naipes4[c.naipe] = true; });
+          if (Object.keys(naipes4).length >= 4) {
+            mult += cj.valor;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Feira', mult: cj.valor,
+                         texto: '🏮 Feira: +' + cj.valor + ' ×mult (4 naipes)' });
           }
           break;
         }
         case 'multSeComecaComPaus':
           if (cartas.length && cartas[0].simbolo === '♠') {
             mult += cj.valor;
-            mensajes.push('☄️ Meteoro: +4 ×mult (começa com ♠)');
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Meteoro', mult: cj.valor,
+                         texto: '☄️ Meteoro: +' + cj.valor + ' ×mult (começa com ♠)' });
           }
           break;
         case 'multMasDanoDescarte':
           mult += cj.valor;
-          mensajes.push('🥁 Maracatu: +10 ×mult');
+          pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Maracatu', mult: cj.valor,
+                       texto: '🥁 Maracatu: +' + cj.valor + ' ×mult' });
           break;
+        case 'chanceMult':
+          if (rng() < 0.5) {
+            mult += cj.valor;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Fantasma', mult: cj.valor,
+                         texto: '👻 Amigo Fantasma: +' + cj.valor + ' ×mult' });
+          } else {
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Fantasma',
+                         texto: '👻 Amigo Fantasma: apagou...' });
+          }
+          break;
+        case 'zorraPorQualidade': {
+          const fortes = ['escalera', 'escaleraDeCor', 'escaleraReal'];
+          const fracas = ['cartaAlta', 'par', 'doblesPares'];
+          let fator = 1;
+          if (fortes.indexOf(mao.clave) !== -1) fator = 3;
+          else if (fracas.indexOf(mao.clave) !== -1) fator = 0.5;
+          if (fator !== 1) {
+            bonusFinal *= fator;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Zorra', multBonus: fator,
+                         texto: '🎲 Zorra Total: ×' + fator + ' na mão' });
+          }
+          break;
+        }
         case 'dinheiroPorBlindEMenosMult':
           mult -= 1;
-          mensajes.push('🍹 Caipirinha: -1 ×mult');
-          break;
-        case 'dinheiroPorMao':
-          dinheiroEncontrado += cj.valor;
-          mensajes.push('💰 Tio Patinhas: +$1');
+          pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Caipirinha', mult: -1,
+                       texto: '🍹 Caipirinha: -1 ×mult' });
           break;
         case 'cartaAleatoriaDobrada': {
-          const i = Math.floor(rng() * cartas.length);
-          fichasCartas += cartas[i].valor;
-          mensajes.push(`🐛 Jogo do Bicho: ${cartas[i].rango}${cartas[i].simbolo} valeu dobro`);
+          if (cartas.length) {
+            const i = Math.floor(rng() * cartas.length);
+            fichasCartas += cartas[i].valor;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Bicho', fichas: cartas[i].valor,
+                         texto: '🐛 Jogo do Bicho: ' + cartas[i].rango + cartas[i].simbolo + ' valeu dobro' });
+          }
           break;
         }
         case 'chanceTriplicar':
-          if (rng() < cj.valor) {
+          if (rng() < cj.valor + (ctx.bonusLoteria || 0)) {
             triplicar = true;
-            mensajes.push('🎟️ LOTERIA! Pontos serão TRIPLICADOS!');
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Loteria',
+                         texto: '🎟️ LOTERIA! Pontos serão TRIPLICADOS!' });
           }
           break;
       }
@@ -373,10 +462,10 @@
         if (c.melhorada === 'ouro') dinheiroEncontrado += 1;
         if (c.melhorada === 'espelho' && coringas.length) {
           const p = coringas[0];
-          if (p.tipo === 'multMasDanoDescarte') multMelhoradas += 10;
+          if (p.tipo === 'multMasDanoDescarte') multMelhoradas += 5;
           if (p.tipo === 'multSeCorOuSequencia' &&
               (mao.clave.indexOf('cor') !== -1 || mao.clave.indexOf('escalera') !== -1)) {
-            multMelhoradas += 5;
+            multMelhoradas += 4;
           }
           if (p.tipo === 'dinheiroPorBlindEMenosMult') multMelhoradas -= 1;
         }
@@ -384,20 +473,28 @@
     }
     if (multMelhoradas) {
       mult += multMelhoradas;
-      mensajes.push(`⚙️ Melhorias: +${multMelhoradas} ×mult`);
+      pasos.push({ tipo: 'melhoria', icone: '⚙️', nome: 'Melhorias', mult: multMelhoradas,
+                   texto: '⚙️ Melhorias: +' + multMelhoradas + ' ×mult' });
     }
 
     // --- regra DEUS DO CAOS: multiplicador aleatório final ---
-    let bonusFinal = 1;
     if (reglaId === 'multAleatorio') {
-      bonusFinal = 0.5 + rng() * 2.5;
-      mensajes.push(`🌀 Deus do Caos: ×${bonusFinal.toFixed(2)} aleatório`);
+      const fator = 0.5 + rng() * 2.5;
+      bonusFinal *= fator;
+      pasos.push({ tipo: 'bonus', icone: '🌀', nome: 'Deus do Caos', multBonus: fator,
+                   texto: '🌀 Deus do Caos: ×' + fator.toFixed(2) + ' aleatório' });
     }
 
     const fichasTotal = fichas + fichasCartas + fichasExtra;
     const multTotal = Math.max(mult, 0);
     let puntaje = Math.round(fichasTotal * multTotal * bonusFinal);
     if (triplicar) puntaje *= 3;
+
+    pasos.push({ tipo: 'total', fichas: fichasTotal, mult: multTotal, bonus: bonusFinal,
+                 pontos: puntaje, triplicar: triplicar });
+
+    const mensajes = pasos.filter(function (p) { return p.texto; })
+                          .map(function (p) { return p.texto; });
 
     return {
       mao,
@@ -412,7 +509,8 @@
       nivel: nivel,
       triplicar: triplicar,
       dinheiroEncontrado: dinheiroEncontrado,
-      mensajes: mensajes
+      mensajes: mensajes,
+      pasos: pasos
     };
   }
 /* ------------------------------------------------------------------
@@ -433,13 +531,51 @@
       desc: 'O caos não te deu nada. Azar.' }
   ];
 
+/* ------------------------------------------------------------------
+     8. DESBLOQUEIOS PERMANENTES (roguelite — "Caixa do Boteco")
+     Condições verificadas no script.js; dados e textos ficam aqui.
+     ------------------------------------------------------------------ */
+  const DESBLOQUEIOS = [
+    { id: 'clientela',    nome: 'Clientela Fiel',      icone: '🍻',
+      como: 'Alcance o 3º chefão em uma partida',
+      efeito: 'Começa a partida com R$8 (em vez de R$6).' },
+    { id: 'barman',       nome: 'Confiança do Barman', icone: '🍺',
+      como: 'Vença o chefão "Galinha dos Ovos"',
+      efeito: 'Toda partida começa com 1 Coringa aleatório grátis.' },
+    { id: 'estante',      nome: 'Estante de Garrafas', icone: '🍾',
+      como: 'Termine um chefão com R$20 ou mais no bolso',
+      efeito: 'A loja passa a vender "+1 Espaço de Coringa" (R$10, até 2 por partida).' },
+    { id: 'jurosCaixa',   nome: 'Juros do Caixa',      icone: '💵',
+      como: 'Vença o chefão "Dona Astúcia"',
+      efeito: 'Os juros do caixa passam a valer até R$8 por chefão.' },
+    { id: 'colecionador', nome: 'Colecionador',        icone: '🎴',
+      como: 'Vença o chefão "Capivara Relâmpago"',
+      efeito: '3 Coringas raros entram no sortimento da loja (Feira, Zorra, Fantasma).' },
+    { id: 'sorteGrande',  nome: 'Sorte Grande',        icone: '🍀',
+      como: 'Faça uma mão de 5.000 pontos ou mais',
+      efeito: 'A Loteria passa a ter 25% de chance (em vez de 15%).' },
+    { id: 'coroa',        nome: 'Coroa do Boteco',     icone: '👑',
+      como: 'Vença os 8 chefões',
+      efeito: '+1 descarte por chefão e título dourado na tela inicial.' }
+  ];
+
+  // Juros do caixa: R$1 por cada R$10 guardados, com teto
+  function calcularJuros(dinheiro, maximo) {
+    return Math.min(maximo || 4, Math.floor(dinheiro / 10));
+  }
+
+  // Custo para subir o nível de uma mão: R$2, subindo R$1 a cada 2 níveis
+  function custoNivel(nivelAtual) {
+    return 2 + Math.floor((nivelAtual || 0) / 2);
+  }
+
   /* ------------------------------------------------------------------
      EXPORTAÇÃO (navegador + Node)
      ------------------------------------------------------------------ */
   const API = {
     NAIPES, RANGOS, MANOS, NIVEIS_MANO,
     CORINGAS, CARTAS_MELHORADAS, JEFES, ROLETA,
-    PREMIO_POR_JEFE,
+    PREMIO_POR_JEFE, DESBLOQUEIOS, calcularJuros, custoNivel,
     criarBaralho, embaralhar, comprar,
     contarPor, esEscalera, avaliarMao,
     calcularPuntaje

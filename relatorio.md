@@ -260,6 +260,33 @@ Roteiro que será usado para demonstrar o trabalho ao professor:
 ### Bônus técnico: do navegador para o APK
 O mesmo jogo foi empacotado como aplicativo Android: o **Capacitor** embute os arquivos do jogo em um projeto nativo (o app roda offline no WebView do próprio Android), os ícones foram gerados por um script em Python e o **APK é compilado automaticamente no GitHub Actions** ao enviar o código ao repositório — bastando baixar o artefato `PokerDoCaos-APK` e instalar no celular.
 
+## 16. ATO 2 — BALANCEAMENTO, ROGUELITE E LORE
+
+Depois do desafio extra, o jogo foi medido com uma simulação de Monte Carlo: uma "IA" que joga sempre a melhor mão vencia **98%** das partidas — fácil demais. A versão 0.2.0 foi redesenhada com base no sistema do *Balatro*:
+
+### 16.1 Balanceamento (medido com o simulador)
+- **Alvos escalando exponencialmente:** 300 · 900 · 2.500 · 6.500 · 12.000 · 22.000 · 55.000 · 150.000;
+- **Prêmios menores:** $3, $3, $4, $5, $7, $9, $12, $15 (antes chegava a $25);
+- **Juros do caixa:** +$1 por cada $10 guardados ao fim de cada chefão (teto $4) — guardar dinheiro virou estratégia;
+- **Nerfs nos Coringas:** Carnavalesco +1 (antes +2), Maracatu +5 (antes +10), Loteria 15% (antes 25%), Onça +4 (antes +6), Futebola +45 (antes +60), Cafézinho +1 descarte (antes +2), Meteoro +3 (antes +4) — e a Feijoada foi buffada para +50;
+- **Nível de mão progressivo:** subir um nível custa $2 e sobe $1 a cada 2 níveis (antes era $2 para sempre);
+- **Tio Patinhas corrigido:** $2 por chefão vencido (antes $1 por mão jogada — pagava demais);
+- **Resultado medido:** a taxa de vitória da IA perfeita caiu de **98% para 26%** (1.000 partidas simuladas).
+
+### 16.2 Espaços de Coringa estilo Balatro
+Os 5 espaços fixos pareciam forçados. Agora: **4 espaços base** e a loja vende **"+1 Espaço" por $10** (no máximo 2 por partida, até 6) — igual aos vouchers do Balatro.
+
+### 16.3 Roguelite — "Caixa do Boteco"
+A derrota agora libera progresso permanente (salvo no aparelho) — 7 desbloqueios com toast comemorativo: Clientela Fiel (+$2 inicial), Confiança do Barman (começa a partida com 1 Coringa), Estante de Garrafas (vende +1 espaço), Juros do Caixa (teto $8), Colecionador (3 Coringas raros entram na loja: Feira Noturna, Zorra Total e Amigo Fantasma), Sorte Grande (Loteria volta a 25%) e Coroa do Boteco (+1 descarte e título dourado).
+
+### 16.4 Lore e falas
+Cada chefão tem **falas em 4 momentos** (balão de fala no cartão + registro no log): entrada, jogador alcança 75% do alvo, vitória do jogador e derrota — ex.: a Galinha dos Ovos provoca ("Có-có! Aposto meus ovos que você NÃO passa!") e se lamenta ao perder.
+
+### 16.5 Contagem de pontos à Balatro
+A antiga "letra miúda" do resultado virou matemática viva: fichas e ×mult pulsam na tela, cada carta ativa uma a uma, os Coringas disparam em sequência (tremendo na fileira) e o total **explode** ao final — com novos efeitos sonoros e um toque que acelera a contagem.
+
+**Validação do Ato 2:** 53 testes unitários, 20 verificações de interface e calibração com 1.000 partidas simuladas.
+
 
 
 

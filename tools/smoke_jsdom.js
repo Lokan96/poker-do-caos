@@ -24,6 +24,13 @@ function verificar(nome, cond, detalhe) {
   else { falhou++; console.log('❌ ' + nome + (detalhe ? ' => ' + detalhe : '')); }
 }
 
+// pula a contagem animada de pontos (a caixa matemática vira skip no toque)
+async function pularContagem(doc) {
+  const m = doc.getElementById('caixa-matematica');
+  if (m && !m.classList.contains('oculta')) m.click();
+  await esperar(700);
+}
+
 async function run() {
   const dom = new JSDOM(htmlOriginal, {
     runScripts: 'outside-only',
@@ -62,6 +69,9 @@ async function run() {
   const mano = doc.getElementById('mano-juego');
   verificar('Mão com 8 cartas', mano.children.length === 8, 'cartas=' + mano.children.length);
   verificar('Chefão 1 é Zé do Controle', doc.getElementById('jefe-nombre').textContent === 'Zé do Controle');
+  verificar('Balão de fala do chefão apareceu', !doc.getElementById('jefe-fala').classList.contains('oculta'));
+  verificar('Caixa do Boteco existe', !!doc.getElementById('caixa-desbloqueios'));
+  verificar('Contadores de matemática existem', !!doc.getElementById('caixa-matematica') && !!doc.getElementById('contador-fichas'));
 
   // 5) Seleciona 5 cartas e joga uma mão
   let cartas = Array.from(mano.children);
@@ -70,7 +80,8 @@ async function run() {
   verificar('Botão jogar habilitado', doc.getElementById('btn-jogar-mano').disabled === false);
 
   doc.getElementById('btn-jogar-mano').click();
-  await esperar(50);
+  await esperar(60);
+  await pularContagem(doc);
   const overlay = doc.getElementById('overlay-puntaje');
   verificar('Overlay de pontuação apareceu', !overlay.classList.contains('oculta'));
   const pontos = parseInt(doc.getElementById('pop-puntos').textContent, 10);
@@ -116,8 +127,9 @@ async function run() {
     const sel = Math.min(5, cartas.length);
     cartas.slice(0, sel).forEach(el => el.click());
     doc.getElementById('btn-jogar-mano').click();
+    await esperar(60);
+    await pularContagem(doc);
     hands++;
-    await esperar(30);
   }
 
   verificar('Blind 1 terminou (vitória ou derrota)',
