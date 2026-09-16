@@ -12,3 +12,4 @@ Thumbs.db
 .snapshots/
 
 tools/rel_log.txt
+tools/out_*.txt

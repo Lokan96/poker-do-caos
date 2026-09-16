@@ -143,7 +143,7 @@ async function run() {
     await esperar(3900);
     const resultado = doc.getElementById('ruleta-resultado').textContent;
     verificar('Roleta deu um resultado', resultado.length > 0, 'resultado=' + resultado);
-    verificar('Roleta desenha 12 segmentos', doc.getElementById('tira-ruleta').children.length === 12,
+    verificar('Roleta desenha 18 segmentos', doc.getElementById('tira-ruleta').children.length === 18,
       'segmentos=' + doc.getElementById('tira-ruleta').children.length);
 
     const btnFecharRuleta = doc.getElementById('btn-fechar-ruleta');

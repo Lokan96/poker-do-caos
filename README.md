@@ -45,15 +45,17 @@ Cada etapa está detalhada em `relatorio.md` (versão entregue: `relatorio.docx`
 
 ## ✨ Recursos
 
-- **10 combinações de pôquer** (Carta Alta até Royal Flush), cada uma com fichas e multiplicador;
-- **16 Coringas brasileiros** com efeitos que quebram regras (Carnavalesco, Feijoada, Loteria, Capivara Zen...) — 3 raros só entram na loja com o desbloqueio "Colecionador";
+- **10 combinações de pôquer** (Carta Alta até Royal Flush), cada uma com fichas e multiplicador — sequências e cores valem com **3, 4 ou 5 cartas** (como no *Balatro*);
+- **29 Coringas brasileiros**: 24 jogáveis (base, trade-offs como Cassino/Juíz/Bomba e build-around como Cartomante/Enxame) + 3 raros que só entram na loja com o desbloqueio "Colecionador" + 5 cheats do modo CHARA;
 - **8 chefões com regras caóticas** ("Cor não vale como Cor", "todas as cartas valem 10", "multiplicador aleatório por mão"...) e alvos escalando de 300 até **150.000** pontos;
 - **Contagem de pontos à Balatro**: fichas e ×mult pulsam na tela, cada carta ativa uma a uma, os Coringas disparam em sequência e o total **explode** ao final;
 - **Falas dos chefões** em 4 momentos: entrada, 75% do alvo, sua vitória e sua derrota;
 - **Caixa do Boteco (roguelite)**: 7 desbloqueios permanentes que a derrota libera (mais dinheiro inicial, Coringa de graça, juros maiores, Coringas raros...);
 - **Economia de boteco**: juros do caixa (+$1 por $10 guardados) e custo de nível progressivo ($2 + $1 a cada 2 níveis);
-- **4 espaços de Coringa** (não 5): +2 espaços compráveis na loja por $10 (estilo voucher do Balatro);
-- **Níveis de mão**: repetir uma combinação a deixa permanentemente mais forte;
+- **4 espaços de Coringa**: +2 espaços compráveis na loja por $10 (estilo voucher do Balatro);
+- **Níveis de mão**: comprar na loja ou jogar a mão sobe o nível da combinação (+10 fichas, +1 ×mult) — builds aceleradas no espírito do *Balatro*;
+- **Modo CHARA (teste)**: digite `chara` no campo de nome para um modo de depuração com 5 cheats (Determinação, Karma, Temmie, Muffet, O Vazio) — isola sistemas para testar no celular, sem gravar recordes nem desbloqueios;
+- **Interface mobile-first**: botões fixos no rodapé, alvos de toque ≥44 px, mini board "📖 Mãos" com a hierarquia das combinações, painel de Coringas ativos;
 - **Loja**: Coringas, cartas melhoradas (Ouro, Fogo, Biônica, Espelho) e upgrade de mãos;
 - **Roleta do Caos** com 6 prêmios aleatórios após cada vitória;
 - **Sons sintetizados** com Web Audio API (sem arquivos de áudio);
@@ -72,9 +74,9 @@ flowchart LR
         SCR["script.js<br/>estados, sons, recordes"]
     end
     subgraph FERR["pasta tools/ — testes e simulações"]
-        T1["test_logica.js<br/>32 testes"]
+        T1["test_logica.js<br/>78 testes"]
         T2["chequear_ids.js<br/>confere os identificadores"]
-        T3["smoke_jsdom.js<br/>17 checagens de tela"]
+        T3["smoke_jsdom.js<br/>22 checagens de tela"]
         T4["simular_partida.js<br/>200 partidas simuladas"]
     end
     subgraph AND["pasta android/ — projeto nativo"]
@@ -93,16 +95,16 @@ Visão em árvore de pastas:
 ```
 trab_2bi/
 ├── app/                        # O JOGO (também é a webDir do Capacitor)
-│   ├── index.html              # Estrutura: 4 telas + 4 janelas sobrepostas (54 IDs)
+│   ├── index.html              # Estrutura: 4 telas + 5 janelas sobrepostas (71 IDs)
 │   ├── style.css               # Tema "boteco" (verde feltro + dourado), cartas em CSS puro, @keyframes
 │   ├── logica.js               # LÓGICA PURA (sem DOM): baralho, mãos, pontuação, Coringas, chefões
 │   ├── script.js               # INTERFACE: máquina de estados, renderização, sons, recordes
 │   ├── manifest.json           # Manifest PWA (nome, ícones, cores)
 │   └── icons/                  # Ícones do app gerados por script
 ├── tools/                      # FERRAMENTAS (não entram no APK)
-│   ├── test_logica.js          # 32 testes unitários da lógica pura
+│   ├── test_logica.js          # 78 testes unitários da lógica pura
 │   ├── chequear_ids.js         # Valida que todo ID usado no JS existe no HTML
-│   ├── smoke_jsdom.js          # 17 verificações de interface simulada (jsdom)
+│   ├── smoke_jsdom.js          # 22 verificações de interface simulada (jsdom)
 │   ├── simular_partida.js      # Simulador Monte Carlo (200 partidas) p/ balanceamento
 │   └── generar_iconos.py       # Gera os ícones Android/PWA (Pillow)
 ├── android/                    # Projeto nativo Android (Capacitor)
@@ -128,7 +130,7 @@ Isso permite **testar o jogo de verdade** sem abrir navegador:
 
 | Comando | O que faz |
 |---|---|
-| `npm test` | 32 testes unitários + validação de IDs + 17 verificações de interface (jsdom) |
+| `npm test` | 78 testes unitários + validação de IDs + 22 verificações de interface (jsdom) |
 | `npm run simular` | Simula 200 partidas com jogadores aleatórios e mostra a taxa de vitória |
 | `npm run apk:local` | Sincroniza e compila o APK localmente (requer Android SDK) |
 
@@ -179,7 +181,7 @@ O APK é compilado **automaticamente** pelo GitHub Actions em dois momentos:
 
 ### Baixar o APK pronto (Release)
 
-- **Versão atual: [v0.1.0](https://github.com/Lokan96/poker-do-caos/releases/tag/v0.1.0)** — arquivo `app-debug.apk` (~4 MB);
+- **Versão atual: [v0.4.0](https://github.com/Lokan96/poker-do-caos/releases/tag/v0.4.0)** — arquivo `app-debug.apk` (~4 MB): contém o balanceamento do Ato 2, os Atos 3/4 (sequências curtas, Coringas trade-off, modo CHARA) e aparece como versão "4.0" nas configurações do Android;
 - Na página da Release, clique em `app-debug.apk` para baixar;
 - Instale no Android permitindo "fontes desconhecidas" — funciona offline.
 
@@ -243,13 +245,13 @@ No primeiro teste no celular apareceu um **problema real**: os prêmios da rolet
 
 ## 🧪 Qualidade
 
-- 53 testes unitários da lógica (avaliação de mãos, Coringas, regras dos chefões, juros, linha do tempo da pontuação);
+- 78 testes unitários da lógica (avaliação de mãos, sequências curtas, Coringas, cheats CHARA, regras dos chefões, juros, linha do tempo da pontuação);
 - Verificação automática de que todo ID referenciado no JS existe no HTML;
 - Teste de fumaça da interface com jsdom (fluxo completo: iniciar → contagem animada → vencer → loja);
-- Balanceamento calibrado com 1.000 partidas simuladas (Monte Carlo): a taxa de vitória da IA perfeita caiu de 98% (antes do Ato 2) para **26%**.
+- Balanceamento calibrado com Monte Carlo: a taxa de vitória da IA perfeita caiu de 98% (antes do Ato 2) para **26%** (Ato 2) e ficou em **29%** com a power fantasy do Ato 4.
 
 ## 📄 Licença e contexto
 
 Projeto escolar da disciplina de Desenvolvimento de Sistemas — atividade "Meu Primeiro Aplicativo Autônomo". O relatório completo está em `relatorio.md` (versão editável) e `relatorio.docx` (entrega).
 
-APK instalável publicado permanentemente na [Release v0.1.0](https://github.com/Lokan96/poker-do-caos/releases/tag/v0.1.0) — e a cada etiqueta nova (`v0.2.0`, ...) o fluxo publica a versão seguinte sozinho.
+APK instalável publicado permanentemente na [Release v0.4.0](https://github.com/Lokan96/poker-do-caos/releases/tag/v0.4.0) — e a cada etiqueta nova (`v0.5.0`, ...) o fluxo publica a versão seguinte sozinho.

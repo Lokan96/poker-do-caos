@@ -195,21 +195,32 @@ body {
 /* ---------- Tarjeta do chefão ---------- */
 .tarjeta-jefe {
   width: 100%;
-  margin-top: 0.8rem;
+  margin-top: 0.5rem;
   background: linear-gradient(160deg, #4a2c0a, #2b1803);
   border: 2px solid var(--dourado);
   border-radius: 16px;
-  padding: 0.7rem 1rem;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.4rem 0.8rem;
-  align-items: center;
+  padding: 0.6rem 0.85rem;
   box-shadow: 0 8px 20px var(--sombra);
 }
 
-.jefe-emoji {
-  font-size: clamp(2.6rem, 11vw, 3.8rem);
-  grid-row: span 2;
+.jefe-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.jefe-icone {
+  flex: 0 0 auto;
+  width: clamp(3.4rem, 13vw, 4.6rem);
+  height: clamp(3.4rem, 13vw, 4.6rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  background: radial-gradient(circle at 35% 30%, #6b4510, #3a2305);
+  border: 2px solid var(--dourado-claro);
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(240, 201, 74, 0.35), inset 0 0 12px rgba(0,0,0,0.5);
   animation: flutua 3s ease-in-out infinite;
 }
 
@@ -218,16 +229,18 @@ body {
   50%      { transform: translateY(-5px); }
 }
 
-.jefe-nombre { font-size: 1.05rem; font-weight: 800; color: var(--dourado-claro); }
-.jefe-regla { font-size: 0.8rem; color: #e8d9a8; line-height: 1.35; }
+.jefe-cuerpo { flex: 1; min-width: 0; }
+
+.jefe-nombre { font-size: 1.1rem; font-weight: 800; color: var(--dourado-claro); }
+.jefe-regla { font-size: 0.82rem; color: #e8d9a8; line-height: 1.35; margin-top: 0.15rem; }
 
 .jefe-alvo {
-  grid-column: 1 / -1;
   display: flex;
   justify-content: center;
   align-items: baseline;
   gap: 0.5rem;
   font-weight: 800;
+  margin-top: 0.4rem;
 }
 
 .alvo-puntos { font-size: 1.5rem; color: var(--dourado-claro); }
@@ -256,7 +269,8 @@ body {
   justify-content: space-around;
   gap: 0.4rem;
   width: 100%;
-  margin: 0.7rem 0;
+  margin: 0.5rem 0;
+  flex-wrap: wrap;
 }
 
 .chip-info {
@@ -267,9 +281,27 @@ body {
   font-size: 0.8rem;
   text-align: center;
   flex: 1;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chip-info b { color: var(--dourado-claro); }
+
+.chip-boton {
+  background: linear-gradient(180deg, var(--dourado-claro), var(--dourado));
+  color: var(--preto);
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  min-height: 40px;
+  font-size: 0.8rem;
+  transition: filter 0.15s ease;
+}
+
+.chip-boton:active { filter: brightness(0.9); }
+.chip-boton:not(:disabled):hover { filter: brightness(1.08); }
 
 /* ---------- Zonas de cartas ---------- */
 .zona-mano, .zona-seleccion { width: 100%; }
@@ -361,15 +393,25 @@ body {
   font-size: 1rem;
   text-shadow: 0 0 6px rgba(127,191,58,0.8);
 }
-/* ---------- Ações ---------- */
-.acciones {
+/* ---------- Barra fixa de ações (rodapé) ---------- */
+.barra-acciones {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
   display: flex;
-  gap: 0.6rem;
-  width: 100%;
-  margin-top: 0.6rem;
+  gap: 0.5rem;
+  padding: 0.55rem 0.6rem;
+  padding-bottom: calc(0.55rem + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, rgba(7, 42, 32, 0.92), rgba(5, 29, 22, 0.98));
+  border-top: 2px solid var(--dourado);
+  box-shadow: 0 -6px 18px var(--sombra);
 }
 
-.acciones .boton { flex: 1; }
+.barra-acciones .boton { flex: 1; margin: 0; min-height: 50px; }
+.barra-acciones .boton.grande { font-size: 0.95rem; padding: 0.7rem 0.4rem; white-space: nowrap; }
+.barra-acciones .boton.secundario { font-size: 0.8rem; padding: 0.7rem 0.3rem; white-space: nowrap; }
 
 /* ---------- Log de mensagens ---------- */
 .log {
@@ -706,7 +748,8 @@ body {
   padding: 0.18rem 0.4rem;
 }
 
-.coringa-mini.treme { animation: tremeCoringa 0.32s; }
+.coringa-mini.treme,
+.coringa-item.treme { animation: tremeCoringa 0.32s; }
 
 @keyframes tremeCoringa {
   0%, 100% { transform: translateY(0) scale(1); }
@@ -865,4 +908,163 @@ body {
 .desbloqueio.aberto {
   border-color: var(--dourado-claro);
   background: rgba(212, 160, 23, 0.12);
+}
+
+/* ---------- Painel de Coringas ativos (na tela de jogo) ---------- */
+.painel-coringas {
+  width: 100%;
+  margin: 0.3rem 0;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(212, 160, 23, 0.45);
+  border-radius: 12px;
+  padding: 0.45rem 0.6rem;
+}
+
+.painel-coringas h3 {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--dourado);
+  margin-bottom: 0.3rem;
+}
+
+.lista-coringas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.coringa-item {
+  background: rgba(212, 160, 23, 0.12);
+  border: 1px solid var(--dourado);
+  border-radius: 8px;
+  padding: 0.22rem 0.45rem;
+  font-size: 0.72rem;
+  color: var(--creme);
+  line-height: 1.25;
+  max-width: 100%;
+}
+
+.coringa-item b { color: var(--dourado-claro); }
+.coringa-item .ci-desc { display: block; color: #bcc9a0; font-size: 0.65rem; }
+.coringa-item.ativo { border-color: var(--dourado-claro); box-shadow: 0 0 8px rgba(240, 201, 74, 0.35); }
+
+/* ---------- Mini Board de Mãos (estilo Balatro) ---------- */
+.caixa-manos {
+  background: linear-gradient(160deg, #3a2a08, #241803);
+  border: 3px solid var(--dourado);
+  border-radius: 24px;
+  padding: 1.2rem 1rem;
+  text-align: center;
+  width: 100%;
+  max-width: 460px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.caixa-manos h2 { color: var(--dourado-claro); letter-spacing: 1px; margin-bottom: 0.3rem; }
+
+.grade-manos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+  margin: 0.8rem 0;
+  text-align: left;
+}
+
+.mano-item {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(212, 160, 23, 0.4);
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mano-item .mi-orde {
+  flex: 0 0 auto;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dourado);
+  color: var(--preto);
+  border-radius: 50%;
+  font-weight: 900;
+  font-size: 0.75rem;
+}
+
+.mano-item .mi-nome { flex: 1; font-weight: 800; color: var(--dourado-claro); font-size: 0.85rem; }
+.mano-item .mi-nivel { color: var(--dourado); font-size: 0.7rem; }
+.mano-item .mi-info { flex: 0 0 auto; text-align: right; font-size: 0.75rem; color: var(--creme); }
+.mano-item .mi-cond { width: 100%; flex-basis: 100%; font-size: 0.7rem; color: #bcc9a0; margin-top: -0.2rem; }
+.mano-item.atual {
+  border-color: var(--dourado-claro);
+  background: rgba(212, 160, 23, 0.14);
+  box-shadow: 0 0 10px rgba(240, 201, 74, 0.25);
+}
+
+/* ---------- Mobile-first / DPI alto: telas pequenas ---------- */
+@media (max-width: 360px) {
+  .pantalla { padding: 0.7rem 0.7rem 5.5rem; }
+  .barra-superior .dato { font-size: 0.75rem; padding: 0.35rem 0.45rem; }
+  .mano-juego { gap: 0.3rem; }
+  .carta { width: clamp(48px, 15vw, 60px); }
+  .chip-info { font-size: 0.72rem; padding: 0.35rem 0.4rem; }
+  .jefe-nombre { font-size: 0.95rem; }
+  .jefe-regla { font-size: 0.72rem; }
+}
+
+/* Espaço extra no rodapé para a barra de ações não cobrir conteúdo */
+#pantalla-juego {
+  padding-bottom: 5.5rem;
+}
+
+/* ---------- ATO 4: dano no chefão, frame de dor e coringas cheat ---------- */
+
+/* Frame de dor: ícone do chefão fica cinza e treme ao receber dano */
+.jefe-icone.dor {
+  animation: dorChefe 0.7s ease-out;
+  filter: grayscale(1) brightness(0.7);
+}
+
+@keyframes dorChefe {
+  0%   { transform: translateY(0) scale(1); filter: grayscale(0); }
+  15%  { transform: translateY(-4px) scale(1.15) rotate(-8deg); filter: grayscale(1) brightness(0.6); }
+  35%  { transform: translateY(2px) scale(0.95) rotate(6deg); }
+  55%  { transform: translateY(-2px) scale(1.05) rotate(-4deg); }
+  100% { transform: translateY(0) scale(1); filter: grayscale(0); }
+}
+
+/* Número de dano flutuante que sobe do cartão do chefão */
+.dano-flutuante {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translateX(-50%);
+  font-size: clamp(1.6rem, 8vw, 2.6rem);
+  font-weight: 900;
+  color: #ff4d4d;
+  text-shadow: 0 2px 0 #7a0000, 0 0 18px rgba(255, 77, 77, 0.7);
+  pointer-events: none;
+  z-index: 45;
+  animation: sobeDano 1.2s ease-out forwards;
+}
+
+@keyframes sobeDano {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.6); }
+  20%  { opacity: 1; transform: translateX(-50%) translateY(-6px) scale(1.25); }
+  60%  { opacity: 1; transform: translateX(-50%) translateY(-26px) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-52px) scale(0.9); }
+}
+
+/* Coringas cheat (modo CHARA): borda roxa fantasmagórica */
+.coringa-mini.cheat,
+.coringa-item.cheat,
+.coringa-propio.cheat {
+  border-color: #9b59b6;
+  box-shadow: 0 0 10px rgba(155, 89, 182, 0.55);
+  background: rgba(107, 63, 160, 0.18);
 }

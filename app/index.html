@@ -52,10 +52,12 @@
     </header>
 
     <section class="tarjeta-jefe" id="tarjeta-jefe">
-      <div class="jefe-emoji" id="jefe-emoji">🧢</div>
-      <div class="jefe-cuerpo">
-        <div class="jefe-nombre" id="jefe-nombre">Chefão</div>
-        <div class="jefe-regla" id="jefe-regla">Regra...</div>
+      <div class="jefe-cabecera">
+        <div class="jefe-icone" id="jefe-emoji">🧢</div>
+        <div class="jefe-cuerpo">
+          <div class="jefe-nombre" id="jefe-nombre">Chefão</div>
+          <div class="jefe-regla" id="jefe-regla">Regra...</div>
+        </div>
       </div>
       <div class="jefe-alvo">
         <span class="alvo-puntos" id="txt-puntos">0</span>
@@ -70,9 +72,13 @@
       <div class="chip-info">🃏 Mãos: <b id="txt-manos">4</b></div>
       <div class="chip-info">🗑️ Descartes: <b id="txt-descartes">3</b></div>
       <div class="chip-info">🎴 <b id="txt-coringas">0</b> Coringas</div>
+      <button id="btn-panel-manos" class="chip-info chip-boton" type="button">📖 Mãos</button>
     </section>
 
-    <div id="tira-coringas" class="tira-coringas"></div>
+    <section id="painel-coringas" class="painel-coringas oculta">
+      <h3>🎭 Coringas ativos</h3>
+      <div id="lista-coringas" class="lista-coringas"></div>
+    </section>
 
     <section class="zona-mano">
       <h3>Sua mão — toque as cartas para selecionar</h3>
@@ -94,14 +100,14 @@
       <div id="contador-total" class="contador total oculta">0</div>
     </section>
 
-    <section class="acciones">
-      <button id="btn-jogar-mano" class="boton grande" disabled>🔥 JOGAR MÃO</button>
-      <button id="btn-descartar" class="boton secundario" disabled>🗑️ DESCARTAR</button>
-      <button id="btn-ordenar" class="boton secundario">🔤 ORDENAR</button>
-    </section>
-
     <section class="log" id="log-juego"></section>
   </main>
+
+  <footer class="barra-acciones" id="barra-acciones">
+    <button id="btn-jogar-mano" class="boton grande" disabled>🔥 JOGAR MÃO</button>
+    <button id="btn-descartar" class="boton secundario" disabled>🗑️ DESCARTAR</button>
+    <button id="btn-ordenar" class="boton secundario">🔤 ORDENAR</button>
+  </footer>
 <!-- ==================== LOJA DO BOTECO ==================== -->
   <main id="pantalla-tienda" class="pantalla oculta">
     <header class="barra-superior">
@@ -176,6 +182,16 @@
       <button id="btn-girar" class="boton grande">🎲 GIRAR</button>
       <div id="ruleta-resultado" class="ruleta-resultado"></div>
       <button id="btn-fechar-ruleta" class="boton fantasma oculta">OK, IR À LOJA ➜</button>
+    </div>
+  </div>
+
+  <!-- ==================== OVERLAY: MINI BOARD DE MÃOS ==================== -->
+  <div id="overlay-manos" class="overlay oculta">
+    <div class="caixa-manos">
+      <h2>📖 MÃOS DO PÔQUER</h2>
+      <p class="dica">Hierarquia da mais fraca para a mais forte. Toque para fechar.</p>
+      <div id="grade-manos" class="grade-manos"></div>
+      <button id="btn-fechar-manos" class="boton">FECHAR</button>
     </div>
   </div>
 

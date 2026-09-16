@@ -104,6 +104,26 @@ function baralhoLimpo() {
   // Com 2 cartas diferentes: carta alta
   mao = L.avaliarMao([carta(5, 0), carta(6, 1)]);
   verificar('2 cartas diferentes = Carta Alta', mao.clave === 'cartaAlta', mao.clave);
+
+  // Sequência com 3 cartas (5-6-7)
+  mao = L.avaliarMao([carta(3, 0), carta(4, 1), carta(5, 2)]);
+  verificar('Sequência com 3 cartas (5-6-7)', mao.clave === 'escalera', mao.clave);
+
+  // Sequência com 4 cartas (9-10-J-Q)
+  mao = L.avaliarMao([carta(7, 0), carta(8, 1), carta(9, 2), carta(10, 3)]);
+  verificar('Sequência com 4 cartas (9-J-Q)', mao.clave === 'escalera', mao.clave);
+
+  // Sequência de Cor com 3 cartas (5-6-7 de Paus)
+  mao = L.avaliarMao([carta(3, 3), carta(4, 3), carta(5, 3)]);
+  verificar('Sequência de Cor com 3 cartas', mao.clave === 'escaleraDeCor', mao.clave);
+
+  // Cor (Flush) com 3 cartas
+  mao = L.avaliarMao([carta(0, 2), carta(4, 2), carta(9, 2)]);
+  verificar('Cor com 3 cartas', mao.clave === 'cor', mao.clave);
+
+  // Quase sequência (5-6-8): NÃO é sequência
+  mao = L.avaliarMao([carta(3, 0), carta(4, 1), carta(6, 2)]);
+  verificar('5-6-8 NÃO é sequência', mao.clave !== 'escalera', mao.clave);
 })();
 
 /* ------------------------------------------------------------------
@@ -145,9 +165,13 @@ function baralhoLimpo() {
   verificar('Futebola: +45 fichas com 3 cartas', r3.fichasExtra === 45, 'extra=' + r3.fichasExtra);
 
   // Loteria: rng 0.1 (menor que 0.15) → triplica
-  const coringaLoteria = [L.CORINGAS.find(c => c.tipo === 'chanceTriplicar')];
+  const coringaLoteria = [L.CORINGAS.find(c => c.tipo === 'chanceTriplicarOuDividir')];
   const r4 = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)], coringas: coringaLoteria, niveis: L.NIVEIS_MANO, rng: () => 0.1 });
   verificar('Loteria (rng 0.1): pontos triplicados', r4.triplicar === true && r4.puntaje === 474, 'puntaje=' + r4.puntaje);
+
+  // Loteria: rng 0.2 (entre 0.15 e 0.30) → divide por 2
+  const r4b = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)], coringas: coringaLoteria, niveis: L.NIVEIS_MANO, rng: () => 0.2 });
+  verificar('Loteria (rng 0.2): pontos divididos por 2', r4b.dividir === true && r4b.puntaje === 79, 'puntaje=' + r4b.puntaje);
 
   // Samba: +5 mult se Cor → mult = 5+5 = 10
   const coringasSamba = [L.CORINGAS.find(c => c.tipo === 'multSeCorOuSequencia')];
@@ -244,10 +268,102 @@ function baralhoLimpo() {
   verificar('Pasos: total casa com a pontuação', rp.pasos[rp.pasos.length - 1].pontos === rp.puntaje);
 
   // Bônus de Loteria via desbloqueio "Sorte Grande" (15% + 10% = 25%)
-  const coringaLoteria2 = [L.CORINGAS.find(c => c.tipo === 'chanceTriplicar')];
+  const coringaLoteria2 = [L.CORINGAS.find(c => c.tipo === 'chanceTriplicarOuDividir')];
   const rl = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
     coringas: coringaLoteria2, niveis: L.NIVEIS_MANO, rng: () => 0.20, bonusLoteria: 0.10 });
   verificar('Loteria com Sorte Grande (rng 0,20 < 0,25): triplica', rl.triplicar === true);
+
+  /* --- Coringas com trade-off (Ato 3) --- */
+  // Cassino: ×2 mult (2→4) mas custoDinheiro 2 → 79 ×4 = 316
+  const coringaCassino = [L.CORINGAS.find(c => c.tipo === 'multDobroMasCustaDinheiro')];
+  const rc = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaCassino, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Cassino: ×2 mult', rc.multTotal === 4, 'mult=' + rc.multTotal);
+  verificar('Cassino: custo $2', rc.custoDinheiro === 2, 'custo=' + rc.custoDinheiro);
+  verificar('Cassino: 316 pontos', rc.puntaje === 316, 'puntaje=' + rc.puntaje);
+
+  // Vidente: +60 fichas extras (79 + 60 = 139 ×2 = 278)
+  const coringaVidente = [L.CORINGAS.find(c => c.tipo === 'fichasMasMenosDescarte')];
+  const rv = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaVidente, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Vidente: +60 fichas extras', rv.fichasExtra === 60, 'extra=' + rv.fichasExtra);
+  verificar('Vidente: 278 pontos', rv.puntaje === 278, 'puntaje=' + rv.puntaje);
+
+  // Juiz: +8 ×mult em mão fraca (Par: 2+8 = 10 → 79 ×10 = 790)
+  const coringaJuiz = [L.CORINGAS.find(c => c.tipo === 'multSeFracaSenaoPenaliza')];
+  const rj = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaJuiz, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Juiz: +8 ×mult em Par (mão fraca)', rj.multTotal === 10, 'mult=' + rj.multTotal);
+
+  // Juiz: -4 ×mult em Sequência (mult 4-4 = 0 → 0 pontos)
+  const rj2 = L.calcularPuntaje({ cartas: [carta(5, 0), carta(6, 1), carta(7, 2), carta(8, 3), carta(9, 0)],
+    coringas: coringaJuiz, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Juiz: -4 ×mult em Sequência (mult 0)', rj2.multTotal === 0 && rj2.puntaje === 0,
+    'mult=' + rj2.multTotal);
+
+  // Bomba: rng 0.1 → +100 fichas (79+100 = 179 ×2 = 358)
+  const coringaBomba = [L.CORINGAS.find(c => c.tipo === 'chanceFichasOuPerdeDinheiro')];
+  const rb = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaBomba, niveis: L.NIVEIS_MANO, rng: () => 0.1 });
+  verificar('Bomba (rng 0.1): +100 fichas', rb.fichasExtra === 100 && rb.puntaje === 358,
+    'puntaje=' + rb.puntaje);
+
+  // Bomba: rng 0.4 → custo $5
+  const rb2 = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaBomba, niveis: L.NIVEIS_MANO, rng: () => 0.4 });
+  verificar('Bomba (rng 0.4): -$5', rb2.custoDinheiro === 5 && rb2.puntaje === 158,
+    'custo=' + rb2.custoDinheiro);
+
+  // Bomba: rng 0.8 → nada acontece
+  const rb3 = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaBomba, niveis: L.NIVEIS_MANO, rng: () => 0.8 });
+  verificar('Bomba (rng 0.8): nada', rb3.puntaje === 158, 'puntaje=' + rb3.puntaje);
+
+  /* --- Coringas build-around (Ato 4, estilo Balatro) --- */
+  // Cartomante: +1 ×mult por chefão vencido (ronda 4 → 4 chefões vencidos: 2+4 = 6)
+  const coringaCartomante = [L.CORINGAS.find(c => c.tipo === 'multPorChefaoVencido')];
+  const rcm = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaCartomante, niveis: L.NIVEIS_MANO, rng: () => 0.5, chefesVencidos: 4 });
+  verificar('Cartomante: +4 ×mult (4 chefões vencidos)', rcm.multTotal === 6, 'mult=' + rcm.multTotal);
+  // Sem chefões vencidos: nada
+  const rcm0 = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaCartomante, niveis: L.NIVEIS_MANO, rng: () => 0.5, chefesVencidos: 0 });
+  verificar('Cartomante (0 vencidos): nada', rcm0.multTotal === 2, 'mult=' + rcm0.multTotal);
+
+  // Enxame: +2 ×mult com todas do mesmo naipe (2 cartas de Treboles: Carta Alta 1 + 2 = 3)
+  const coringaEnxame = [L.CORINGAS.find(c => c.tipo === 'multSeMesmoNaipe')];
+  const re = L.calcularPuntaje({ cartas: [carta(5, 0), carta(7, 0)],
+    coringas: coringaEnxame, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Enxame: +2 ×mult (naipe único)', re.multTotal === 3, 'mult=' + re.multTotal);
+  // Naipes mistos: nada
+  const re2 = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 0)],
+    coringas: coringaEnxame, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Enxame (naipes mistos): nada', re2.multTotal === 2, 'mult=' + re2.multTotal);
+
+  // Farejador: +40 fichas por ♠ (2 espadas naipe 3: 79 + 80 = 159 ×2 = 318)
+  const coringaFarejador = [L.CORINGAS.find(c => c.tipo === 'fichasPorEspadas')];
+  const rfj = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2), carta(10, 3), carta(5, 3)],
+    coringas: coringaFarejador, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Farejador: +80 fichas (2× ♠)', rfj.fichasExtra === 80 && rfj.puntaje === 318,
+    'extra=' + rfj.fichasExtra);
+
+  // Bibliotecário: +3 ×mult com exatamente 2 cartas (par: (40+18)×5 = 290)
+  const coringaBibliotecario = [L.CORINGAS.find(c => c.tipo === 'multSeDuasCartas')];
+  const rbl = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1)],
+    coringas: coringaBibliotecario, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Bibliotecário: +3 ×mult (2 cartas)', rbl.multTotal === 5 && rbl.puntaje === 290,
+    'mult=' + rbl.multTotal + ' pontos=' + rbl.puntaje);
+  // Com 3 cartas: nada (par: mult 2)
+  const rbl2 = L.calcularPuntaje({ cartas: [carta(7, 0), carta(7, 1), carta(2, 2)],
+    coringas: coringaBibliotecario, niveis: L.NIVEIS_MANO, rng: () => 0.5 });
+  verificar('Bibliotecário (3 cartas): nada', rbl2.multTotal === 2, 'mult=' + rbl2.multTotal);
+
+  // Coringas cheat definidos (5) e marcados
+  const cheats = L.CORINGAS.filter(c => c.cheat);
+  verificar('5 Coringas cheat definidos', cheats.length === 5, 'cheats=' + cheats.length);
+  verificar('Cheats: Determinação, Karma, Temmie, Muffet, Vazio',
+    cheats.map(c => c.id).sort().join(',') === 'determinacao,karma,muffet,temmie,vazio',
+    cheats.map(c => c.id).join(','));
 
   // Desbloqueios definidos (7), alvos novos e falas completas
   verificar('7 desbloqueios definidos', L.DESBLOQUEIOS.length === 7, '' + L.DESBLOQUEIOS.length);

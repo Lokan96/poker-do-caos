@@ -103,17 +103,25 @@
   }
 
   function esEscalera(indices) {
-    if (indices.length !== 5) return false;
+    if (indices.length < 3 || indices.length > 5) return false;
     const ordenados = indices.slice().sort(function (a, b) { return a - b; });
-    // A baixa: A,2,3,4,5 => [0,1,2,3,12]
-    if (ordenados[0] === 0 && ordenados[1] === 1 && ordenados[2] === 2 &&
-        ordenados[3] === 3 && ordenados[4] === 12) {
-      return true;
+
+    // Sequência normal (consecutiva)
+    let normal = true;
+    for (let i = 1; i < ordenados.length; i++) {
+      if (ordenados[i] !== ordenados[i - 1] + 1) { normal = false; break; }
     }
-    for (let i = 1; i < 5; i++) {
-      if (ordenados[i] !== ordenados[i - 1] + 1) return false;
+    if (normal) return true;
+
+    // Sequência com Ás baixo: A,2,3... => [0,1,2,...,12]
+    if (ordenados[ordenados.length - 1] === 12 && ordenados[0] === 0) {
+      let ok = true;
+      for (let i = 1; i < ordenados.length - 1; i++) {
+        if (ordenados[i] !== i) { ok = false; break; }
+      }
+      if (ok) return true;
     }
-    return true;
+    return false;
   }
 
   function avaliarMao(cartas) {
@@ -127,43 +135,30 @@
     const mismoNaipe = naipes === 1;
     const indices = cartas.map(function (c) { return c.idx; });
     const esSeq = esEscalera(indices);
+    const pares = valores.filter(function (v) { return v === 2; }).length;
 
-    if (n === 5) {
-      const royal = esSeq && mismoNaipe &&
-        [8, 9, 10, 11, 12].indexOf(indices[0]) !== -1 &&
-        [8, 9, 10, 11, 12].indexOf(indices[1]) !== -1 &&
-        [8, 9, 10, 11, 12].indexOf(indices[2]) !== -1 &&
-        [8, 9, 10, 11, 12].indexOf(indices[3]) !== -1 &&
-        [8, 9, 10, 11, 12].indexOf(indices[4]) !== -1;
-      if (royal) return MANOS.escaleraReal;
-      if (esSeq && mismoNaipe) return MANOS.escaleraDeCor;
-      if (mismoNaipe) return MANOS.cor;
-      if (esSeq) return MANOS.escalera;
-      if (maxIguales === 4) return MANOS.quadra;
-      if (maxIguales === 3 && valores.length === 2) return MANOS.fullHouse;
-      if (maxIguales === 3) return MANOS.trinca;
-      const pares = valores.filter(function (v) { return v === 2; }).length;
-      if (pares === 2) return MANOS.doblesPares;
-      if (pares === 1) return MANOS.par;
-      return MANOS.cartaAlta;
+    // Royal Flush (5 cartas 10..A do mesmo naipe)
+    if (n === 5 && mismoNaipe && esSeq) {
+      const temRoyal = [8, 9, 10, 11, 12].every(function (v) { return indices.indexOf(v) !== -1; });
+      if (temRoyal) return MANOS.escaleraReal;
     }
-    if (n === 4) {
-      if (maxIguales === 4) return MANOS.quadra;
-      if (maxIguales === 3) return MANOS.trinca;
-      const pares4 = valores.filter(function (v) { return v === 2; }).length;
-      if (pares4 === 2) return MANOS.doblesPares;
-      if (pares4 === 1) return MANOS.par;
-      return MANOS.cartaAlta;
-    }
-    if (n === 3) {
-      if (maxIguales === 3) return MANOS.trinca;
-      if (valores.filter(function (v) { return v === 2; }).length === 1) return MANOS.par;
-      return MANOS.cartaAlta;
-    }
-    if (n === 2) {
-      if (valores.filter(function (v) { return v === 2; }).length === 1) return MANOS.par;
-      return MANOS.cartaAlta;
-    }
+    // Straight Flush (sequência do mesmo naipe, 3-5 cartas)
+    if (esSeq && mismoNaipe) return MANOS.escaleraDeCor;
+    // Quadra (4 iguais)
+    if (maxIguales === 4) return MANOS.quadra;
+    // Full House (3 iguais + 2 iguais, só com 5 cartas)
+    if (n === 5 && maxIguales === 3 && valores.length === 2) return MANOS.fullHouse;
+    // Cor / Flush (mesmo naipe, 3-5 cartas)
+    if (mismoNaipe && n >= 3) return MANOS.cor;
+    // Sequência (Straight, 3-5 cartas consecutivas)
+    if (esSeq) return MANOS.escalera;
+    // Trinca (3 iguais)
+    if (maxIguales === 3) return MANOS.trinca;
+    // Dois Pares (2+2)
+    if (pares === 2) return MANOS.doblesPares;
+    // Par (2 iguais)
+    if (pares === 1) return MANOS.par;
+    // Carta Alta
     return MANOS.cartaAlta;
   }
 /* ------------------------------------------------------------------
@@ -176,8 +171,8 @@
       desc: '+50 fichas se você jogar 5 cartas.' },
     { id: 'samba',       nome: 'Coringa do Samba',      icone: '🥁', preco: 7,  tipo: 'multSeCorOuSequencia', valor: 4,
       desc: '+4 ×mult se a mão for Cor ou Sequência.' },
-    { id: 'loteria',     nome: 'Coringa Loteria',       icone: '🎟️', preco: 8,  tipo: 'chanceTriplicar', valor: 0.15,
-      desc: '15% de chance de TRIPLICAR a pontuação da mão.' },
+    { id: 'loteria',     nome: 'Coringa Loteria',       icone: '🎟️', preco: 8,  tipo: 'chanceTriplicarOuDividir', valor: 0.15,
+      desc: '15% de chance de TRIPLICAR, 15% de chance de DIVIDIR por 2.' },
     { id: 'onca',        nome: 'Coringa Onça Pintada',  icone: '🐆', preco: 7,  tipo: 'multSeTresNaipes', valor: 4,
       desc: '+4 ×mult se a mão tiver 3 ou mais naipes diferentes.' },
     { id: 'futebol',     nome: 'Coringa Futebola',      icone: '⚽', preco: 5,  tipo: 'fichasSeTresCartas', valor: 45,
@@ -201,7 +196,33 @@
     { id: 'zorra',       nome: 'Coringa Zorra Total',   icone: '🎲', preco: 7,  tipo: 'zorraPorQualidade', valor: 0, raro: true,
       desc: '×0,5 em Par/Carta Alta; ×3 em Sequência ou melhor.' },
     { id: 'fantasma',    nome: 'Coringa Amigo Fantasma',icone: '👻', preco: 6,  tipo: 'chanceMult', valor: 2, raro: true,
-      desc: '50% de chance de +2 ×mult por mão.' }
+      desc: '50% de chance de +2 ×mult por mão.' },
+    { id: 'cassino',     nome: 'Coringa Cassino',       icone: '🎰', preco: 8,  tipo: 'multDobroMasCustaDinheiro', valor: 2,
+      desc: '×2 ×mult, mas -$2 por mão jogada.' },
+    { id: 'vidente',     nome: 'Coringa Vidente',       icone: '🔮', preco: 7,  tipo: 'fichasMasMenosDescarte', valor: 60,
+      desc: '+60 fichas, mas -1 descarte por chefão.' },
+    { id: 'juiz',        nome: 'Coringa Juiz',          icone: '⚖️', preco: 7,  tipo: 'multSeFracaSenaoPenaliza', valor: 8,
+      desc: '+8 ×mult em Carta Alta/Par, -4 ×mult em Sequência ou melhor.' },
+    { id: 'bomba',       nome: 'Coringa Bomba',         icone: '💣', preco: 6,  tipo: 'chanceFichasOuPerdeDinheiro', valor: 100,
+      desc: '30% de +100 fichas, 20% de perder $5.' },
+    { id: 'cartomante',  nome: 'Coringa Cartomante',    icone: '🚬', preco: 10, tipo: 'multPorChefaoVencido', valor: 1,
+      desc: '+1 ×mult acumulado por cada chefão vencido nesta partida (aumenta com o tempo!).' },
+    { id: 'enxame',      nome: 'Coringa Enxame',        icone: '🐝', preco: 8,  tipo: 'multSeMesmoNaipe', valor: 2,
+      desc: '+2 ×mult se TODAS as cartas jogadas forem do mesmo naipe.' },
+    { id: 'farejador',   nome: 'Coringa Farejador',     icone: '👑', preco: 9,  tipo: 'fichasPorEspadas', valor: 40,
+      desc: '+40 fichas por cada carta de Espadas (♠) jogada.' },
+    { id: 'bibliotecario', nome: 'Coringa Bibliotecário', icone: '📚', preco: 7, tipo: 'multSeDuasCartas', valor: 3,
+      desc: '+3 ×mult se você jogar exatamente 2 cartas (build de pares de qualidade).' },
+    { id: 'determinacao', nome: 'Determinação',        icone: '❤️', tipo: 'cheatDeterminacao', valor: 0, cheat: true,
+      desc: 'CHEAT: ficar sem mãos reinicia o chefão atual. *Mas você recusou a ficar no chão.*' },
+    { id: 'karma',       nome: 'Karma',                 icone: '🔪', tipo: 'cheatKarma', valor: 0, cheat: true,
+      desc: 'CHEAT: qualquer mão jogada derrota o chefão instantaneamente. *SUA VEZ DE SOFRER.*' },
+    { id: 'temmie',      nome: 'Temmie',                icone: '🐶', tipo: 'cheatTemmie', valor: 0, cheat: true,
+      desc: 'CHEAT: dinheiro infinito. hOI!!! eu sou temmie!! tem shop!!!' },
+    { id: 'muffet',      nome: 'Muffet',                icone: '🕷️', tipo: 'cheatMuffet', valor: 0, cheat: true,
+      desc: 'CHEAT: descartes infinitos e grátis. *Ahuhuhu~* Alguém apostou em você.' },
+    { id: 'vazio',       nome: 'O Vazio',               icone: '⬛', tipo: 'cheatVazio', valor: 0, cheat: true,
+      desc: 'CHEAT: chefões têm alvo de 1 ponto. *No fim, tudo volta ao vazio.*' }
   ];
 
   const CARTAS_MELHORADAS = [
@@ -248,7 +269,7 @@
                derrota: 'Miav... até o gato se arrepende.' } },
     { id: 5,  nome: 'Dona Astúcia',       icone: '🎭', alvo: 12000, reglaId: 'menosMaos',
       regla: 'Você só tem 3 mãos neste chefão.',
-      falas: { entrada: 'Três mãos, querido. Eu faço minhas com menos.',
+      falas: { entrada: 'Apenas três mãos, querido. Quem sabe fazer mais, faz com menos.',
                meio: 'Meu instinto diz que você vai falhar feio.',
                vitoria: 'A máscara caiu. Nós duas sabemos quem manda.',
                derrota: 'Leve a vitória, meu anjo. A próxima é minha.' } },
@@ -341,6 +362,8 @@
     let fichasExtra = 0;
     let dinheiroEncontrado = 0;
     let triplicar = false;
+    let dividir = false;
+    let custoDinheiro = 0;
     let bonusFinal = 1;
 // --- efeitos dos coringas ---
     for (const cj of coringas) {
@@ -445,16 +468,95 @@
           }
           break;
         }
-        case 'chanceTriplicar':
-          if (rng() < cj.valor + (ctx.bonusLoteria || 0)) {
+        case 'chanceTriplicarOuDividir': {
+          const chance = cj.valor + (ctx.bonusLoteria || 0);
+          const r = rng();
+          if (r < chance) {
             triplicar = true;
             pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Loteria',
                          texto: '🎟️ LOTERIA! Pontos serão TRIPLICADOS!' });
+          } else if (r < chance * 2) {
+            dividir = true;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Loteria',
+                         texto: '🌧️ Loteria deu ruim... Pontos DIVIDIDOS por 2!' });
+          }
+          break;
+        }
+        case 'multDobroMasCustaDinheiro':
+          mult *= cj.valor;
+          custoDinheiro += 2;
+          pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Cassino', multBonus: cj.valor,
+                       texto: '🎰 Cassino: ×' + cj.valor + ' ×mult, -$2 nesta mão' });
+          break;
+        case 'fichasMasMenosDescarte':
+          fichasExtra += cj.valor;
+          pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Vidente', fichas: cj.valor,
+                       texto: '🔮 Vidente: +' + cj.valor + ' fichas' });
+          break;
+        case 'multSeFracaSenaoPenaliza': {
+          const fracas = ['cartaAlta', 'par', 'doblesPares'];
+          if (fracas.indexOf(mao.clave) !== -1) {
+            mult += cj.valor;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Juiz', mult: cj.valor,
+                         texto: '⚖️ Juiz: +' + cj.valor + ' ×mult (mão fraca)' });
+          } else {
+            mult -= 4;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Juiz', mult: -4,
+                         texto: '⚖️ Juiz puniu: -4 ×mult (mão forte demais!)' });
+          }
+          break;
+        }
+        case 'chanceFichasOuPerdeDinheiro': {
+          const r = rng();
+          if (r < 0.30) {
+            fichasExtra += cj.valor;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Bomba', fichas: cj.valor,
+                         texto: '💣 BOMBA EXPLODIU: +' + cj.valor + ' fichas!' });
+          } else if (r < 0.50) {
+            custoDinheiro += 5;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Bomba',
+                         texto: '💣 A Bomba... desativou? -$5 (azia)' });
+          }
+          break;
+        }
+        case 'multPorChefaoVencido': {
+          const bonus = (ctx.chefesVencidos || 0) * cj.valor;
+          if (bonus) {
+            mult += bonus;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Cartomante', mult: bonus,
+                         texto: '🚬 Cartomante: +' + bonus + ' ×mult (' + ctx.chefesVencidos + ' chefões vencidos)' });
+          }
+          break;
+        }
+        case 'multSeMesmoNaipe': {
+          const naipesUnico = {};
+          cartas.forEach(c => { naipesUnico[c.naipe] = true; });
+          if (cartas.length > 0 && Object.keys(naipesUnico).length === 1) {
+            mult += cj.valor;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Enxame', mult: cj.valor,
+                         texto: '🐝 Enxame: +' + cj.valor + ' ×mult (naipe único!)' });
+          }
+          break;
+        }
+        case 'fichasPorEspadas': {
+          const espadass = cartas.filter(c => c.simbolo === '♠').length;
+          if (espadass) {
+            fichasExtra += espadass * cj.valor;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Farejador', fichas: espadass * cj.valor,
+                         texto: '👑 Farejador: +' + (espadass * cj.valor) + ' fichas (' + espadass + '× ♠)' });
+          }
+          break;
+        }
+        case 'multSeDuasCartas':
+          if (cartas.length === 2) {
+            mult += cj.valor;
+            pasos.push({ tipo: 'coringa', icone: cj.icone, nome: 'Bibliotecário', mult: cj.valor,
+                         texto: '📚 Bibliotecário: +' + cj.valor + ' ×mult (2 cartas)' });
           }
           break;
       }
     }
-// --- mult extra de cartas melhoradas (Biônica, Espelho, Ouro) ---
+    // --- mult extra de cartas melhoradas (Biônica, Espelho, Ouro) ---
     let multMelhoradas = 0;
     if (reglaId !== 'todasDez') {
       cartas.forEach(c => {
@@ -489,6 +591,7 @@
     const multTotal = Math.max(mult, 0);
     let puntaje = Math.round(fichasTotal * multTotal * bonusFinal);
     if (triplicar) puntaje *= 3;
+    if (dividir) puntaje = Math.round(puntaje / 2);
 
     pasos.push({ tipo: 'total', fichas: fichasTotal, mult: multTotal, bonus: bonusFinal,
                  pontos: puntaje, triplicar: triplicar });
@@ -508,6 +611,8 @@
       puntaje: puntaje,
       nivel: nivel,
       triplicar: triplicar,
+      dividir: dividir,
+      custoDinheiro: custoDinheiro,
       dinheiroEncontrado: dinheiroEncontrado,
       mensajes: mensajes,
       pasos: pasos

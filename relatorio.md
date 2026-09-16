@@ -293,6 +293,81 @@ A antiga "letra miúda" do resultado virou matemática viva: fichas e ×mult pul
 
 **Validação do Ato 2:** 53 testes unitários, 22 verificações de interface e calibração com 1.000 partidas simuladas.
 
+## 17. ATO 3 — PÓS-TESTE: CORREÇÕES, DIFICULDADE E QUALIDADE DE VIDA
+
+Depois de jogar de verdade em celular e desktop, os seguintes ajustes foram feitos (v0.3.0):
+
+### 17.1 Bug de lógica corrigido — Sequências com 3 e 4 cartas
+O avaliador de mãos só reconhecia sequência com **exatamente 5 cartas**: mãos como `5♠ 6♥ 7♣` (sequência de 3) ou `9♦ 10♠ J♣ Q♥` (de 4) caíam como "Carta Alta" ou "Par". Corrigido o avaliador (`esEscalera`/`avaliarMao`) para aceitar **3 a 5 cartas consecutivas**, incluindo o Ás baixo em sequências curtas (A-2-3, A-2-3-4). Agora Sequência, Cor e Sequência de Cor funcionam com 3, 4 ou 5 cartas — igual ao *Balatro*.
+
+### 17.2 Dificuldade — fim do "nível grátis"
+Antes, o nível da mão subia **automaticamente** cada vez que a mão era jogada, o que tornava o jogo fácil demais no fim da partida. Agora o nível de mão **só sobe comprando na loja** — o jogador precisa decidir entre investir dinheiro em Coringas, cartas melhoradas ou níveis de mão, criando decisões estratégicas reais de gestão de recursos (como no *Balatro*).
+
+### 17.3 Coringas com risco e recompensa (trade-offs)
+Novos Coringas com poder forte **mas** desvantagem, para decisões difíceis:
+- 🎰 **Cassino** — ×2 ×mult, mas −$2 por mão jogada;
+- 🔮 **Vidente** — +60 fichas, mas −1 descarte por chefão;
+- ⚖️ **Juiz** — +8 ×mult em mãos fracas (Carta Alta/Par), −4 ×mult em mãos fortes;
+- 💣 **Bomba** — 30% de +100 fichas, 20% de perder $5;
+- 🎟️ **Loteria** — agora tem lado negro: 15% de TRIPLICAR, mas 15% de DIVIDIR os pontos por 2.
+
+### 17.4 Bug de economia corrigido — descartar sem dinheiro
+Com o chefão "Mão de Gato" (descartes custam $1) ou o Coringa Maracatu, era possível **descartar sem ter dinheiro** (o custo era simplesmente zerado). Agora: o botão mostra **"💸 SEM DINHEIRO"** e fica desabilitado quando o custo supera o caixa, e a função de descarte bloqueia a ação com a mensagem "Dinheiro insuficiente para descartar!".
+
+### 17.5 Interface — mobile-first e legibilidade
+- **Chefão redesenhado:** ícone grande dentro de um círculo dourado flutuante ao lado do nome e da regra (antes: campo vazio e texto apertado);
+- **Botões fixados no rodapé** (barra sempre visível, sem precisar rolar a tela para achar "JOGAR MÃO" — inclusive em telas altas/DPI alta);
+- **Layout mobile-first:** media query para telas ≤360 px, alvos de toque ≥44 px, `safe-area-inset` para telas com notcha;
+- **Painel de Coringas ativos** na tela de jogo, com ícone + nome + descrição (antes eram só emojis);
+- **Mini board de mãos** (botão "📖 Mãos"): painel com a hierarquia completa das 10 combinações, condição de formação, fichas × mult e nível atual de cada uma;
+- **Roleta robustecida:** animação por CSS transition com centralização prévia da pista e fallback por `requestAnimationFrame`.
+
+### 17.6 Texto corrigido
+Fala de entrada da Dona Astúcia reescrita ("Apenas três mãos, querido. Quem sabe fazer mais, faz com menos.").
+
+**Validação do Ato 3:** suíte de testes expandida e reexecutada — **69 testes unitários, 0 falhas** (incluindo novos testes de sequências curtas, Loteria dividindo, Cassino, Vidente, Juiz e Bomba).
+
+## 18. ATO 4 — POWER FANTASY, CAOS VISUAL E MODO CHARA (v0.4.0)
+
+Uma rodada focada em sensação de poder, apresentação caótica do dano e ferramentas de teste no celular.
+
+### 18.1 O nível da mão volta a subir ao jogar
+A mudança do Ato 3 (nível só na loja) foi revertida: **jogar uma mão agora sobe o nível dela** (+10 fichas, +1 ×mult). Combinado com a compra na loja, isso cria "builds" aceleradas — números gigantes na tela e sensação de crescimento, no espírito do *Balatro*. A loja continua sendo o atalho para focar uma mão específica.
+
+### 18.2 Cálculo de dano caótico + vida do chefão
+O resultado da mão agora é apresentado de forma mais fluida e "agressiva":
+- A sequência de pontos (mão → cartas → coringas → total) é encadeada com animação;
+- Ao final, um **número de dano flutuante** (`-2.350`) sobe do cartão do chefão;
+- O ícone do chefão recebe um **frame de dor**: fica cinza e treme por ~0,7s (efeito `grayscale` + shake);
+- A barra de progresso representa a "vida" do chefão, esvaziando conforme o dano entra.
+
+### 18.3 Coringas build-around (menos aleatórios, mais estratégicos)
+Quatro coringas que recompensam **construir em torno de uma ideia** (condição consistente, não sorte):
+- 🚬 **Cartomante** — +1 ×mult **acumulado** por cada chefão vencido na partida (aumenta quanto mais longe você vai);
+- 🐝 **Enxame** — +2 ×mult se TODAS as cartas jogadas forem do mesmo naipe;
+- 👑 **Farejador** — +40 fichas por cada carta de Espadas (♠) jogada;
+- 📚 **Bibliotecário** — +3 ×mult ao jogar exatamente 2 cartas.
+
+### 18.4 Modo CHARA — controle de teste temático (Undertale)
+Digitando **"chara"** (qualquer maiúscula/minúscula) no campo de nome, ativa-se um modo de teste com um badge 👻 na barra superior. Ele concede **cinco Coringas cheat** que isolam sistemas para testar no celular, **não entram na loja/roleta** e **não gravam recordes**:
+- ❤️ **Determinação** — não morre: ficar sem mãos reinicia o chefão atual (permite testar cada regra à vontade);
+-  **Karma** — qualquer mão derrota o chefão instantaneamente (testa o fluxo de vitória/roleta/loja);
+- 🐶 **Temmie** — dinheiro infinito (testa a loja inteira; exibido como "hOI! R$...");
+- 🕷️ **Muffet** — descartes infinitos e grátis (testa o descarte e o bug do Mão de Gato);
+- ⬛ **O Vazio** — alvos dos chefões viram 1 ponto (testa o fluxo completo do zero em segundos).
+
+### 18.5 Validação
+- Suíte de testes expandida com os novos coringas build-around e a verificação dos 5 cheats: **78 testes unitários, 0 falhas**;
+- Sintaxe validada com `node --check` em `logica.js` e `script.js`;
+- **Rebalanceamento medido:** como o nível de mão volta a subir ao jogar, o simulador de Monte Carlo (200 partidas) foi rodado de novo. A taxa de vitória da IA perfeita ficou em **29%** (contra 26% do Ato 2) — levemente mais fácil, o que é coerente com a "power fantasy" pretendida sem quebrar o desafio. Os alvos **não precisaram ser alterados**.
+
+### 18.6 Consolidação para a Release v0.4.0
+Antes da publicação, uma limpeza final de consistência:
+- O tremor dos Coringas durante a contagem animada foi **realojado no painel de Coringas** (`lista-coringas`), pois a antiga tira de emojis foi removida da tela no redesenho — função morta `renderTiraCoringas` eliminada;
+- A checagem de fumaça da roleta foi atualizada para os **18 segmentos** do desenho novo (antes esperava 12);
+- Versão nativa elevada para `versionCode 4` / `versionName "4.0"` e projeto Android ressincronizado (`npx cap sync`);
+- Revalidação completa: **78 testes unitários, 0 falhas · 22/22 verificações de interface · 0 IDs em falta**.
+
 
 
 

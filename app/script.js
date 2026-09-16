@@ -62,6 +62,7 @@
     ficha:   () => tono(340, 0.05, 'sine', 0.09),
     multGanha: () => tono(760, 0.08, 'triangle', 0.11),
     explode: () => { [180, 320, 520, 840].forEach((f, i) => setTimeout(() => tono(f, 0.16, 'square', 0.12), i * 70)); },
+    dano:    () => tono(120, 0.15, 'sawtooth', 0.16),
     ruleta:  () => { for (let i = 0; i < 20; i++) setTimeout(() => tono(300 + aleatorio(0, 900), 0.04, 'square', 0.05), i * 60); }
   };
 
@@ -87,6 +88,7 @@
   }
 
   function guardarRecords() {
+    if (E && E.chara) return; // modo CHARA não grava recordes
     try { localStorage.setItem(CLAVE_RECORDS, JSON.stringify(records)); } catch (e) { /* ignore */ }
   }
 
@@ -157,6 +159,7 @@
       bonus: { maoExtra: 0, pontosDobrados: 1, cartaOroGratis: false },
       slotsExtras: 0,                 // espaços de Coringa comprados na loja (0..2)
       falaMeja: false,                // fala dos "75% do alvo" já mostrada neste chefão
+      alvoEfetivo: 0,                 // alvo do chefão (pode ser 1 com o cheat Vazio)
       ofertasCoringas: [],
       ofertasMejoradas: [],
       ultimaPremio: 0
@@ -174,15 +177,24 @@
   };
 
   const descartesPorBlind = function () {
+    if (temCheat('cheatMuffet')) return 999; // Muffet: descartes infinitos
     let d = desbloqueios.coroa ? 4 : 3;
     if (E.coringas.some(function (c) { return c.tipo === 'descarteExtra'; })) d += 1;
-    return d;
+    if (E.coringas.some(function (c) { return c.tipo === 'fichasMasMenosDescarte'; })) d -= 1;
+    return Math.max(0, d);
   };
 
   const maximoCoringas = function () { return 4 + E.slotsExtras; };
   const slotsLivre = function () { return maximoCoringas() - E.coringas.length; };
   const poolCoringas = function () {
-    return LOGICA.CORINGAS.filter(function (c) { return !c.raro || desbloqueios.colecionador; });
+    return LOGICA.CORINGAS.filter(function (c) {
+      if (c.cheat) return false; // cheats nunca entram na loja/roleta
+      return !c.raro || desbloqueios.colecionador;
+    });
+  };
+
+  const temCheat = function (tipo) {
+    return E.coringas.some(function (c) { return c.tipo === tipo; });
   };
 
   const custoDescarte = function () {
@@ -199,14 +211,28 @@
   /* ------------------------------------------------------------------
      5. INÍCIO DA PARTIDA E DO BLIND
      ------------------------------------------------------------------ */
+  /* ---------- Modo CHARA (cheat de teste, inspirado em Undertale) ---------- */
+  let modoChara = false;
+
+  const CORINGAS_CHEAT = function () {
+    return LOGICA.CORINGAS.filter(function (c) { return c.cheat; });
+  };
+
   function iniciarPartida(nome) {
     E = novoEstado();
     E.nome = nome;
+    modoChara = nome.toLowerCase() === 'chara';
+    E.chara = modoChara;
     E.dinheiro = desbloqueios.clientela ? 8 : 6;
     E.ronda = 0;
     E.pontosTotales = 0;
     records.partidas++;
-    if (desbloqueios.barman) {
+    if (modoChara) {
+      // cheats: dinheiro fixado em alto + os 5 coringas cheats na fileira
+      E.dinheiro = 99;
+      CORINGAS_CHEAT().forEach(function (c) { E.coringas.push(Object.assign({}, c)); });
+      mostrarToast('👻 MODO CHARA — imortal, rico e com cheats. *Fique determinado.*');
+    } else if (desbloqueios.barman) {
       E.coringas.push(Object.assign({}, escoger(poolCoringas())));
       records.coringasTotales++;
     }
@@ -225,11 +251,13 @@
     E.manos = manosPorBlind();
     E.descartes = descartesPorBlind();
     E.pontos = 0;
+    // O Vazio: alvo do chefão = 1 ponto
+    E.alvoEfetivo = temCheat('cheatVazio') ? 1 : jefeAtual().alvo;
     E.melhorasPendientes = [];
     E.falaMeja = false;
     E.bonus.maoExtra = 0; // bônus da roleta é consumido no blind atual
     if (E.ronda > 0) E.bonus.cartaOroGratis = false;
-    if (E.ronda >= 2) desbloquear('clientela');
+    if (!modoChara && E.ronda >= 2) desbloquear('clientela');
     ocultarFala();
     mostrarFala(jefeAtual().falas.entrada);
   }
@@ -252,36 +280,41 @@
     if (!E) return;
     const j = jefeAtual();
 
-    $('txt-nome').textContent = E.nome;
-    $('txt-dinheiro').textContent = 'R$' + E.dinheiro;
+    $('txt-nome').textContent = modoChara ? E.nome + ' 👻' : E.nome;
+    $('txt-dinheiro').textContent = temCheat('cheatTemmie') ? 'hOI! R$' + E.dinheiro : 'R$' + E.dinheiro;
     $('txt-ronda').textContent = E.ronda + 1;
     $('jefe-emoji').textContent = j.icone;
     $('jefe-nombre').textContent = j.nome;
     $('jefe-regla').textContent = j.regla;
     $('txt-puntos').textContent = E.pontos;
-    $('txt-alvo').textContent = j.alvo;
+    $('txt-alvo').textContent = E.alvoEfetivo || j.alvo;
     $('txt-manos').textContent = E.manos;
-    $('txt-descartes').textContent = E.descartes;
+    $('txt-descartes').textContent = temCheat('cheatMuffet') ? '∞' : E.descartes;
     $('txt-coringas').textContent = E.coringas.length + '/' + maximoCoringas();
 
-    const taxa = Math.min(100, Math.round((E.pontos / j.alvo) * 100));
+    const alvoAtual = E.alvoEfetivo || j.alvo;
+    const taxa = Math.min(100, Math.round((E.pontos / alvoAtual) * 100));
     const barra = $('barra-progresso');
     barra.style.width = taxa + '%';
     barra.classList.toggle('cheio', taxa >= 100);
 
     renderizarManoJuego();
     renderizarSeleccion();
-    renderTiraCoringas();
+    renderPainelCoringas();
 
-    if (!E.falaMeja && E.pontos >= jefeAtual().alvo * 0.75) {
+    if (!E.falaMeja && E.pontos >= alvoAtual * 0.75) {
       E.falaMeja = true;
       mostrarFala(jefeAtual().falas.meio);
     }
 
     const sel = E.seleccionIds.size;
+    const custo = custoDescarte();
+    const semDinheiroDescarte = custo > E.dinheiro && !temCheat('cheatTemmie');
     $('btn-jogar-mano').disabled = sel < 1 || sel > 5 || E.manos <= 0;
-    $('btn-descartar').disabled = sel < 1 || E.descartes <= 0;
-    $('btn-descartar').textContent = '🗑️ DESCARTAR' + (custoDescarte() > 0 ? ' (-R$' + custoDescarte() + ')' : '');
+    $('btn-descartar').disabled = sel < 1 || (!temCheat('cheatMuffet') && E.descartes <= 0) || semDinheiroDescarte;
+    $('btn-descartar').textContent = semDinheiroDescarte
+      ? '💸 SEM DINHEIRO'
+      : '🗑️ DESCARTAR' + (custo > 0 && !temCheat('cheatTemmie') ? ' (-R$' + custo + ')' : '');
     // ORDENAR nunca fica preso: sempre reabilitado fora da contagem
     $('btn-ordenar').disabled = false;
   }
@@ -357,11 +390,15 @@
       niveis: E.nivelMano,
       rng: Math.random,
       ronda: E.ronda + 1,
+      chefesVencidos: E.ronda,
       bonusLoteria: desbloqueios.sorteGrande ? 0.10 : 0
     });
 
-    // nível da mão sobe ao ser usada
+    // Lv up progressivo: jogar a mão sobe o nível dela (power fantasy à Balatro)
     E.nivelMano[res.mao.clave] = (E.nivelMano[res.mao.clave] || 0) + 1;
+
+    // Karma: qualquer mão derrota o chefão instantaneamente
+    if (temCheat('cheatKarma')) res.puntaje = (E.alvoEfetivo || jefeAtual().alvo) + 1;
 
     let pontos = res.puntaje;
     let avisoDobro = '';
@@ -375,6 +412,12 @@
     // dinheiro das Cartas de Ouro jogadas
     if (res.dinheiroEncontrado > 0) {
       E.dinheiro += res.dinheiroEncontrado;
+    }
+
+    // custos de coringas (Cassino -$2, Bomba pode -$5)
+    if (res.custoDinheiro > 0 && !temCheat('cheatTemmie')) {
+      E.dinheiro = Math.max(0, E.dinheiro - res.custoDinheiro);
+      añadirLog('💸 Coringas custaram R$' + res.custoDinheiro);
     }
 
     if (pontos >= 5000) desbloquear('sorteGrande');
@@ -392,8 +435,32 @@
       E.manos--;
       renderizarJuego();
       Som.jugar();
+      danoNoChefe(pontos);
       mostrarOverlayPuntaje(res, pontos, avisoDobro);
     });
+  }
+
+  /* ---------- Dano no chefão: número flutuante + frame de dor ---------- */
+  function danoNoChefe(pontos) {
+    const alvoAtual = E.alvoEfetivo || jefeAtual().alvo;
+    const dano = Math.min(pontos, alvoAtual);
+    const icone = $('jefe-emoji');
+    const card = $('tarjeta-jefe');
+    if (!icone || !card) return;
+
+    // frame de dor: cinza + tremor
+    icone.classList.remove('dor');
+    void icone.offsetWidth;
+    icone.classList.add('dor');
+    setTimeout(function () { icone.classList.remove('dor'); }, 700);
+
+    // número de dano flutuante subindo do cartão do chefão
+    const el = document.createElement('div');
+    el.className = 'dano-flutuante';
+    el.textContent = '-' + dano.toLocaleString('pt-BR');
+    card.appendChild(el);
+    Som.dano();
+    setTimeout(function () { el.remove(); }, 1300);
   }
 
   let animId = 0; // token da animação corrente (cada nova mão cancela a anterior)
@@ -407,24 +474,74 @@
     el.classList.add('pulso');
   }
 
-  function renderTiraCoringas() {
-    const zona = $('tira-coringas');
+  function renderPainelCoringas() {
+    const painel = $('painel-coringas');
+    if (!painel) return;
+    const lista = $('lista-coringas');
+    if (!lista) return;
+    if (!E.coringas.length) {
+      painel.classList.add('oculta');
+      lista.innerHTML = '';
+      return;
+    }
+    painel.classList.remove('oculta');
+    lista.innerHTML = '';
+    E.coringas.forEach(function (c) {
+      const el = document.createElement('div');
+      el.className = 'coringa-item' + (c.cheat ? ' cheat' : '');
+      el.setAttribute('data-icone', c.icone);
+      el.innerHTML = '<span>' + c.icone + ' <b>' + c.nome + '</b></span>' +
+        '<span class="ci-desc">' + c.desc + '</span>';
+      lista.appendChild(el);
+    });
+  }
+
+  // Mini board: hierarquia das mãos de pôquer (estilo Balatro)
+  function renderizarMiniBoard() {
+    const zona = $('grade-manos');
     if (!zona) return;
     zona.innerHTML = '';
-    E.coringas.forEach(function (c) {
-      const el = document.createElement('span');
-      el.className = 'coringa-mini';
-      el.title = c.nome + ' — ' + c.desc;
-      el.textContent = c.icone;
+    const ordem = [
+      'cartaAlta', 'par', 'doblesPares', 'trinca', 'escalera', 'cor',
+      'fullHouse', 'quadra', 'escaleraDeCor', 'escaleraReal'
+    ];
+    ordem.forEach(function (clave, i) {
+      const mano = LOGICA.MANOS[clave];
+      const nivel = (E && E.nivelMano) ? (E.nivelMano[clave] || 0) : 0;
+      const el = document.createElement('div');
+      el.className = 'mano-item';
+      el.innerHTML =
+        '<span class="mi-orde">' + (i + 1) + '</span>' +
+        '<span class="mi-nome">' + mano.nombre + '</span>' +
+        (nivel > 0 ? '<span class="mi-nivel">Nv ' + nivel + '</span>' : '') +
+        '<span class="mi-info">' + (mano.fichas + nivel * 10) + ' ×' + (mano.mult + nivel) + '</span>' +
+        '<span class="mi-cond">' + condicaoMao(clave, mano) + '</span>';
       zona.appendChild(el);
     });
   }
 
+  function condicaoMao(clave, mano) {
+    switch (clave) {
+      case 'cartaAlta':     return 'Nenhuma combinação — só a carta mais alta.';
+      case 'par':           return '2 cartas do mesmo valor.';
+      case 'doblesPares':   return '2 pares diferentes (4 cartas).';
+      case 'trinca':        return '3 cartas do mesmo valor.';
+      case 'escalera':      return '3 a 5 cartas em sequência (ex.: 5♠ 6♥ 7♣).';
+      case 'cor':           return '3 a 5 cartas do mesmo naipe.';
+      case 'fullHouse':     return '1 trinca + 1 par (5 cartas).';
+      case 'quadra':        return '4 cartas do mesmo valor.';
+      case 'escaleraDeCor': return 'Sequência do mesmo naipe (3-5 cartas).';
+      case 'escaleraReal':  return '10, J, Q, K, A do mesmo naipe (5 cartas).';
+      default:              return mano.desc || '';
+    }
+  }
+
   function sacudirCoringa(texto) {
-    const tira = $('tira-coringas');
-    if (!tira || !texto) return;
-    Array.from(tira.children).forEach(function (el) {
-      if (texto.indexOf(el.textContent) !== -1) {
+    const lista = $('lista-coringas');
+    if (!lista || !texto) return;
+    Array.from(lista.children).forEach(function (el) {
+      const icone = el.getAttribute('data-icone') || '';
+      if (icone && texto.indexOf(icone) !== -1) {
         el.classList.add('treme');
         setTimeout(function () { el.classList.remove('treme'); }, 320);
       }
@@ -543,7 +660,7 @@
   }
 
   function mostrarOverlayPuntaje(res, pontos, avisoDobro) {
-    $('pop-mao').textContent = res.mao.nombre + (res.nivel ? '  (nível ' + res.nivel + ')' : '');
+    $('pop-mao').textContent = res.mao.nome + (res.nivel ? '  (nível ' + res.nivel + ')' : '');
     let detalle = 'Fichas: ' + res.fichasTotal +
       '  (mão ' + res.fichasBase + ' + cartas ' + res.fichasCartas +
       (res.fichasExtra ? ' + extras ' + res.fichasExtra : '') + ')\n' +
@@ -574,11 +691,20 @@
     $('overlay-puntaje').classList.add('oculta');
     guardarRecords();
 
-    if (E.pontos >= jefeAtual().alvo) {
+    const alvoAtual = E.alvoEfetivo || jefeAtual().alvo;
+    if (E.pontos >= alvoAtual) {
       ganarBlind();
       return;
     }
     if (E.manos <= 0) {
+      // Determinação: ficar sem mãos reinicia o chefão atual (imortalidade)
+      if (temCheat('cheatDeterminacao')) {
+        mostrarToast('❤️ *Você está cheio de DETERMINAÇÃO.* O chefão recomeça!');
+        evoluirParaBlind(E.ronda);
+        renderizarJuego();
+        forcaDealAnimacao();
+        return;
+      }
       perderPartida();
       return;
     }
@@ -589,16 +715,23 @@
      9. DESCARTAR
      ------------------------------------------------------------------ */
   function descartar() {
-    if (!E || E.descartes <= 0) return;
+    if (!E) return;
+    const infinito = temCheat('cheatMuffet');
+    if (!infinito && E.descartes <= 0) return;
     const cartas = E.manoJuego.filter(function (c) { return E.seleccionIds.has(c.id); });
     if (!cartas.length) return;
 
     const custo = custoDescarte();
-    if (custo > 0) {
+    if (custo > E.dinheiro && !temCheat('cheatTemmie')) {
+      mostrarToast('💸 Dinheiro insuficiente para descartar! Custo: R$' + custo);
+      renderizarJuego();
+      return;
+    }
+    if (custo > 0 && !temCheat('cheatTemmie')) {
       E.dinheiro = Math.max(0, E.dinheiro - custo);
       añadirLog('💸 Descartes custaram R$' + custo);
     }
-    E.descartes--;
+    if (!infinito) E.descartes--;
 
     E.manoJuego = E.manoJuego.filter(function (c) { return !E.seleccionIds.has(c.id); });
     E.seleccionIds = new Set();
@@ -616,21 +749,27 @@
     let premio = LOGICA.PREMIO_POR_JEFE[E.ronda];
     if (E.coringas.some(function (c) { return c.tipo === 'dinheiroPorBlindEMenosMult'; })) premio += 3;
     premio += E.coringas.filter(function (c) { return c.tipo === 'dinheiroPorChefao'; }).length * 2;
-    E.dinheiro += premio;
+    if (temCheat('cheatTemmie')) {
+      E.dinheiro = 99; // Temmie: dinheiro sempre infinito
+    } else {
+      E.dinheiro += premio;
+    }
     E.ultimaPremio = premio;
     E.bonus.pontosDobrados = 1; // o bônus da roleta vale apenas para o blind em que foi consumido
 
     // juros do caixa: R$1 por cada R$10 guardados (teto 5, ou 8 com o desbloqueio)
     const juros = LOGICA.calcularJuros(E.dinheiro, desbloqueios.jurosCaixa ? 8 : 4);
-    if (juros > 0) {
+    if (juros > 0 && !temCheat('cheatTemmie')) {
       E.dinheiro += juros;
       añadirLog('💵 Juros do caixa: +$' + juros);
     }
 
-    if (E.dinheiro >= 20) desbloquear('estante');
-    if (E.ronda === 1) desbloquear('barman');
-    if (E.ronda === 3) desbloquear('jurosCaixa');
-    if (E.ronda === 5) desbloquear('colecionador');
+    if (!modoChara) {
+      if (E.dinheiro >= 20) desbloquear('estante');
+      if (E.ronda === 1) desbloquear('barman');
+      if (E.ronda === 3) desbloquear('jurosCaixa');
+      if (E.ronda === 5) desbloquear('colecionador');
+    }
 
     records.chefesVencidos = Math.max(records.chefesVencidos, E.ronda + 1);
     records.melhorPuntaje = Math.max(records.melhorPuntaje, E.pontosTotales);
@@ -647,11 +786,12 @@
   const LARGURA_SEGMENTO = 84;
 
   function montarTira() {
+    // Monta 3 cópias da roleta para garantir deslocamento contínuo
     const tira = $('tira-ruleta');
     tira.innerHTML = '';
-    const dobla = LOGICA.ROLETA.concat(LOGICA.ROLETA);
+    const tripla = LOGICA.ROLETA.concat(LOGICA.ROLETA, LOGICA.ROLETA);
     const cores = ['#d4a017', '#8a1c1c', '#1c6e5c', '#6b3fa0', '#1f6fb2', '#b0781f'];
-    dobla.forEach(function (seg, i) {
+    tripla.forEach(function (seg, i) {
       const el = document.createElement('div');
       el.className = 'segmento-ruleta';
       el.style.background = cores[i % cores.length];
@@ -659,25 +799,32 @@
       el.setAttribute('data-id', seg.id);
       tira.appendChild(el);
     });
-    // Largura total fixa: os segmentos não dependem de flex para existir
-    tira.style.width = (dobla.length * LARGURA_SEGMENTO) + 'px';
+    // Largura total fixa
+    tira.style.width = (tripla.length * LARGURA_SEGMENTO) + 'px';
   }
 
   function mostrarRuleta() {
     montarTira();
-    $('tira-ruleta').style.transform = 'translateX(0px)';
+    // Centraliza a roleta na pista ANTES de mostrar (evita medição com 0)
+    $('overlay-ruleta').classList.remove('oculta');
+    const pistaAncho = $('pista-ruleta').clientWidth ||
+      Math.max(280, (window.innerWidth || 360) - 40);
+    const compensa = -(LOGICA.ROLETA.length * LARGURA_SEGMENTO) +
+      (pistaAncho - LARGURA_SEGMENTO) / 2;
+    const tira = $('tira-ruleta');
+    tira.style.transition = 'none';
+    tira.style.transform = 'translateX(' + compensa + 'px)';
     $('ruleta-resultado').textContent = '';
     $('btn-girar').classList.remove('oculta');
     $('btn-girar').disabled = false;
     $('btn-fechar-ruleta').classList.add('oculta');
-    $('overlay-ruleta').classList.remove('oculta');
   }
 
   function girarRuleta() {
     const tira = $('tira-ruleta');
     const indice = aleatorio(0, LOGICA.ROLETA.length - 1);
-    const alvoVisual = indice + LOGICA.ROLETA.length;
-    // largura da pista com guarda: se o WebView não medir, usa a tela menos margens
+    // O alvo visual fica na 2ª cópia da roleta (centralizada)
+    const alvoVisual = LOGICA.ROLETA.length + indice;
     const pistaAncho = $('pista-ruleta').clientWidth ||
       Math.max(280, (window.innerWidth || 360) - 40);
     const rotações = aleatorio(2, 4) * LOGICA.ROLETA.length;
@@ -687,26 +834,40 @@
     $('btn-girar').disabled = true;
     Som.ruleta();
 
-    // Animação por requestAnimationFrame com transform (sem CSS transition nem left:
-    // funciona em qualquer WebView, mesmo os que não animam propriedades de layout)
-    const duracao = 3400;
+    // Usa CSS transition (mais confiável que rAF manual em WebViews)
+    tira.style.transition = 'transform 3.4s cubic-bezier(0.15, 0.85, 0.25, 1)';
+    tira.style.transform = 'translateX(' + dest + 'px)';
+
+    // Fallback: se a transition não disparar (WebView antigo), forçar por rAF
+    let concluido = false;
     const inicio = Date.now();
-    function easeFora(t) { return 1 - Math.pow(1 - t, 3); }
     function quadro() {
-      const t = Math.min(1, (Date.now() - inicio) / duracao);
-      tira.style.transform = 'translateX(' + Math.round(dest * easeFora(t)) + 'px)';
-      if (t < 1) {
+      const t = (Date.now() - inicio) / 3400;
+      if (t >= 1 && !concluido) {
+        concluido = true;
+        finalizarRuleta();
+      } else if (t < 1) {
         requestAnimationFrame(quadro);
-      } else {
-        const r = LOGICA.ROLETA[indice];
-        aplicarRoleta(r);
-        $('ruleta-resultado').innerHTML =
-          '<b>' + r.icone + ' ' + r.nome + '</b><br><span class="ruleta-legenda">' + r.desc + '</span>';
-        $('btn-girar').classList.add('oculta');
-        $('btn-fechar-ruleta').classList.remove('oculta');
       }
     }
+    // Espera 3.6s (tempo da transition) e finaliza
+    setTimeout(function () {
+      if (!concluido) {
+        concluido = true;
+        finalizarRuleta();
+      }
+    }, 3600);
+    // Fallback rAF para navegadores que não animam CSS transition
     requestAnimationFrame(quadro);
+
+    function finalizarRuleta() {
+      const r = LOGICA.ROLETA[indice];
+      aplicarRoleta(r);
+      $('ruleta-resultado').innerHTML =
+        '<b>' + r.icone + ' ' + r.nome + '</b><br><span class="ruleta-legenda">' + r.desc + '</span>';
+      $('btn-girar').classList.add('oculta');
+      $('btn-fechar-ruleta').classList.remove('oculta');
+    }
   }
 
   function aplicarRoleta(r) {
@@ -734,6 +895,7 @@
       case 'nada':
         break;
     }
+    if (temCheat('cheatTemmie')) E.dinheiro = 99;
     guardarRecords();
   }
 /* ------------------------------------------------------------------
@@ -774,8 +936,8 @@
 
   function renderizarTienda() {
     if (!E) return;
-    $('txt-nome-tienda').textContent = E.nome;
-    $('txt-dinheiro-tienda').textContent = 'R$' + E.dinheiro;
+    $('txt-nome-tienda').textContent = modoChara ? E.nome + ' 👻' : E.nome;
+    $('txt-dinheiro-tienda').textContent = temCheat('cheatTemmie') ? 'hOI! R$' + E.dinheiro : 'R$' + E.dinheiro;
     $('txt-slots').textContent = E.coringas.length + '/' + maximoCoringas();
 
     // Coringas à venda
@@ -843,7 +1005,7 @@
     } else {
       E.coringas.forEach(function (c) {
         const el = document.createElement('div');
-        el.className = 'coringa-propio';
+        el.className = 'coringa-propio' + (c.cheat ? ' cheat' : '');
         el.innerHTML = '<div class="co-icone">' + c.icone + '</div>' +
           '<div class="co-texto"><b>' + c.nome + '</b><p>' + c.desc + '</p></div>';
         zonaCj.appendChild(el);
@@ -934,17 +1096,18 @@
   }
 
   function mostrarVictoria() {
-    desbloquear('coroa');
+    if (!modoChara) desbloquear('coroa');
     records.chefesVencidos = 8;
     records.melhorPuntaje = Math.max(records.melhorPuntaje, E.pontosTotales);
     guardarRecords();
     Som.ganar();
     capaConfeti();
     mostrarPantalla('pantalla-fin');
-    $('fin-emoji').textContent = '🏆';
+    $('fin-emoji').textContent = modoChara ? '👻' : '🏆';
     $('fin-titulo').textContent = 'VOCÊ VENCEU O CAOS!';
     $('fin-info').innerHTML =
       '<p>Venceu os <b>8 chefões</b> — você é o <b>Rei do Boteco</b>! 👑</p>' +
+      (modoChara ? '<p><i>*Apesar de tudo, foi DETERMINADO.* (modo teste, sem recorde)</i></p>' : '') +
       '<p>Pontuação total: <b>' + E.pontosTotales + '</b></p>' +
       '<p>Recorde partida: <b>' + records.melhorPuntaje + '</b></p>';
   }
@@ -1048,8 +1211,22 @@
     $('btn-fechar-ruleta').addEventListener('click', fecharRuleta);
     $('btn-continuar').addEventListener('click', continuar);
     $('btn-reiniciar').addEventListener('click', function () {
+      modoChara = false;
       mostrarPantalla('pantalla-inicio');
       mostrarRecords();
+    });
+
+    // Mini board de mãos
+    renderizarMiniBoard();
+    $('btn-panel-manos').addEventListener('click', function () {
+      renderizarMiniBoard();
+      $('overlay-manos').classList.remove('oculta');
+    });
+    $('btn-fechar-manos').addEventListener('click', function () {
+      $('overlay-manos').classList.add('oculta');
+    });
+    $('overlay-manos').addEventListener('click', function (e) {
+      if (e.target === $('overlay-manos')) $('overlay-manos').classList.add('oculta');
     });
 
     inputNome.addEventListener('keydown', function (e) {
