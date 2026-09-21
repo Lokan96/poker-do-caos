@@ -86,6 +86,12 @@ async function run() {
   verificar('Overlay de pontuação apareceu', !overlay.classList.contains('oculta'));
   const pontos = parseInt(doc.getElementById('pop-puntos').textContent, 10);
   verificar('Pontuação > 0 na primeira mão', pontos > 0, 'pontos=' + pontos);
+  verificar('Nome da mão no overlay não é undefined (bug corrigido)',
+    doc.getElementById('pop-mao').textContent !== 'undefined' &&
+    doc.getElementById('pop-mao').textContent.length > 0,
+    'pop-mao=' + doc.getElementById('pop-mao').textContent);
+  verificar('Botão KARMA oculto fora do modo CHARA',
+    doc.getElementById('btn-karma').classList.contains('oculta'));
 
   // fecha o overlay para que o progresso da barra se atualice
   doc.getElementById('btn-fechar-puntaje').click();

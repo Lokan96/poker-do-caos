@@ -360,9 +360,9 @@ function baralhoLimpo() {
 
   // Coringas cheat definidos (5) e marcados
   const cheats = L.CORINGAS.filter(c => c.cheat);
-  verificar('5 Coringas cheat definidos', cheats.length === 5, 'cheats=' + cheats.length);
-  verificar('Cheats: Determinação, Karma, Temmie, Muffet, Vazio',
-    cheats.map(c => c.id).sort().join(',') === 'determinacao,karma,muffet,temmie,vazio',
+  verificar('4 Coringas cheat definidos', cheats.length === 4, 'cheats=' + cheats.length);
+  verificar('Cheats: Determinação, Karma, Temmie, Muffet (O Vazio removido)',
+    cheats.map(c => c.id).sort().join(',') === 'determinacao,karma,muffet,temmie',
     cheats.map(c => c.id).join(','));
 
   // Desbloqueios definidos (7), alvos novos e falas completas

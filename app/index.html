@@ -73,6 +73,7 @@
       <div class="chip-info">🗑️ Descartes: <b id="txt-descartes">3</b></div>
       <div class="chip-info">🎴 <b id="txt-coringas">0</b> Coringas</div>
       <button id="btn-panel-manos" class="chip-info chip-boton" type="button">📖 Mãos</button>
+      <button id="btn-karma" class="chip-info chip-boton oculta" type="button">🔪 KARMA — DANO TOTAL</button>
     </section>
 
     <section id="painel-coringas" class="painel-coringas oculta">
@@ -170,22 +171,26 @@
     </div>
   </div>
 
-  <!-- ==================== OVERLAY: ROLETA DO CAOS ==================== -->
+    <!-- ==================== OVERLAY: ROLETA DO CAOS ==================== -->
   <div id="overlay-ruleta" class="overlay oculta">
     <div class="caixa-ruleta">
       <h2>🎰 ROLETA DO CAOS</h2>
       <p class="dica">Venceu o chefão! Gire e veja o que o caos reserva...</p>
-      <div class="ruleta-flecha">▼</div>
-      <div id="pista-ruleta" class="pista-ruleta">
-        <div id="tira-ruleta" class="tira-ruleta"></div>
+      <div class="roleta-container">
+        <div class="roleta-seta">▼</div>
+        <div class="roleta-viewbox">
+          <div id="tira-ruleta" class="roleta-tira"></div>
+        </div>
       </div>
-      <button id="btn-girar" class="boton grande">🎲 GIRAR</button>
-      <div id="ruleta-resultado" class="ruleta-resultado"></div>
-      <button id="btn-fechar-ruleta" class="boton fantasma oculta">OK, IR À LOJA ➜</button>
+      <div id="ruleta-resultado" class="roleta-resultado oculta">
+        <div id="ruleta-resultado-nome" class="roleta-resultado-nome"></div>
+        <div id="ruleta-resultado-legenda" class="roleta-resultado-legenda"></div>
+      </div>
+      <button id="btn-girar" class="boton grande">🎰 GIRAR ROLETA</button>
+      <button id="btn-fechar-ruleta" class="boton fantasma oculta">OK, IR À LOJA 💰</button>
     </div>
   </div>
-
-  <!-- ==================== OVERLAY: MINI BOARD DE MÃOS ==================== -->
+<!-- ==================== OVERLAY: MINI BOARD DE MÃOS ==================== -->
   <div id="overlay-manos" class="overlay oculta">
     <div class="caixa-manos">
       <h2>📖 MÃOS DO PÔQUER</h2>

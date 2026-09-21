@@ -220,10 +220,8 @@
     { id: 'temmie',      nome: 'Temmie',                icone: '🐶', tipo: 'cheatTemmie', valor: 0, cheat: true,
       desc: 'CHEAT: dinheiro infinito. hOI!!! eu sou temmie!! tem shop!!!' },
     { id: 'muffet',      nome: 'Muffet',                icone: '🕷️', tipo: 'cheatMuffet', valor: 0, cheat: true,
-      desc: 'CHEAT: descartes infinitos e grátis. *Ahuhuhu~* Alguém apostou em você.' },
-    { id: 'vazio',       nome: 'O Vazio',               icone: '⬛', tipo: 'cheatVazio', valor: 0, cheat: true,
-      desc: 'CHEAT: chefões têm alvo de 1 ponto. *No fim, tudo volta ao vazio.*' }
-  ];
+      desc: 'CHEAT: descartes infinitos e grátis. *Ahuhuhu~* Alguém apostou em você.' }
+      ];
 
   const CARTAS_MELHORADAS = [
     { id: 'ouro',    nome: 'Carta de Ouro',   icone: '🪙', preco: 3,

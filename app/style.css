@@ -638,59 +638,94 @@ body {
   text-shadow: 0 0 10px rgba(240,201,74,0.8);
 }
 
-.pista-ruleta {
+/* ---------- Roleta do Caos (padrão Antigravity: tira no fluxo + transform) ---------- */
+.roleta-container {
   width: 100%;
-  height: 74px;
-  overflow: hidden;
-  margin: 0.3rem 0 0.9rem;
-  border: 2px solid var(--dourado);
-  border-radius: 12px;
-  position: relative;
-  /* fundo listrado: a pista nunca parece "vazia", mesmo antes de girar */
-  background: repeating-linear-gradient(90deg,
-    rgba(0, 0, 0, 0.18) 0px, rgba(0, 0, 0, 0.18) 84px,
-    rgba(255, 255, 255, 0.05) 84px, rgba(255, 255, 255, 0.05) 168px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0.3rem 0 0.6rem;
 }
 
-.tira-ruleta {
-  position: absolute;
-  left: 0;
-  top: 0;
-  white-space: nowrap;
+.roleta-seta {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--dourado-claro);
+  animation: flutuar-seta 0.8s ease-in-out infinite alternate;
+}
+
+.roleta-viewbox {
+  width: 252px;
+  height: 94px;
+  overflow: hidden;
+  border: 3px solid var(--dourado);
+  border-radius: 12px;
+  background: #04140e;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.9), 0 0 15px rgba(212, 160, 23, 0.45);
+  position: relative;
+}
+
+.roleta-tira {
+  display: flex;
+  height: 100%;
   will-change: transform;
 }
 
 .segmento-ruleta {
   width: 84px;
-  height: 70px;
-  display: inline-block;
-  vertical-align: top;
-  gap: 0.2rem;
-  font-size: 0.62rem;
-  font-weight: 700;
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
+  font-weight: 700;
+  font-size: 0.62rem;
+  padding: 4px;
   text-align: center;
-  padding: 0 0.2rem;
 }
 
-.segmento-ruleta .seg-icone { font-size: 1.3rem; }
+.segmento-ruleta .seg-icone { font-size: 1.6rem; }
+
+.segmento-ruleta div:last-child { line-height: 1.1; text-shadow: 0 1px 2px #000; }
+
+@keyframes flutuar-seta {
+  from { transform: translateY(-3px); }
+  to { transform: translateY(3px); }
+}
 
 .ruleta-resultado {
-  margin: 0.6rem 0 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--dourado);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+.roleta-resultado-nome {
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--dourado-claro);
-  min-height: 2.6rem;
-  text-align: center;
 }
 
-.ruleta-resultado .ruleta-legenda {
-  display: block;
+.roleta-resultado-legenda {
   font-size: 0.82rem;
   font-weight: 500;
   color: var(--creme);
+  font-style: italic;
   line-height: 1.35;
-  margin-top: 0.15rem;
+  margin-top: 2px;
+}
+
+#btn-karma {
+  border-color: #8a1c1c;
+  color: #ffb0b0;
+  font-weight: 700;
 }
 
 /* ---------- Confete ---------- */

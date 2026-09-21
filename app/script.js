@@ -252,7 +252,7 @@
     E.descartes = descartesPorBlind();
     E.pontos = 0;
     // O Vazio: alvo do chefão = 1 ponto
-    E.alvoEfetivo = temCheat('cheatVazio') ? 1 : jefeAtual().alvo;
+    E.alvoEfetivo = jefeAtual().alvo;
     E.melhorasPendientes = [];
     E.falaMeja = false;
     E.bonus.maoExtra = 0; // bônus da roleta é consumido no blind atual
@@ -281,6 +281,7 @@
     const j = jefeAtual();
 
     $('txt-nome').textContent = modoChara ? E.nome + ' 👻' : E.nome;
+    $('btn-karma').classList.toggle('oculta', !modoChara);
     $('txt-dinheiro').textContent = temCheat('cheatTemmie') ? 'hOI! R$' + E.dinheiro : 'R$' + E.dinheiro;
     $('txt-ronda').textContent = E.ronda + 1;
     $('jefe-emoji').textContent = j.icone;
@@ -396,9 +397,6 @@
 
     // Lv up progressivo: jogar a mão sobe o nível dela (power fantasy à Balatro)
     E.nivelMano[res.mao.clave] = (E.nivelMano[res.mao.clave] || 0) + 1;
-
-    // Karma: qualquer mão derrota o chefão instantaneamente
-    if (temCheat('cheatKarma')) res.puntaje = (E.alvoEfetivo || jefeAtual().alvo) + 1;
 
     let pontos = res.puntaje;
     let avisoDobro = '';
@@ -660,7 +658,7 @@
   }
 
   function mostrarOverlayPuntaje(res, pontos, avisoDobro) {
-    $('pop-mao').textContent = res.mao.nome + (res.nivel ? '  (nível ' + res.nivel + ')' : '');
+    $('pop-mao').textContent = res.mao.nombre + (res.nivel ? '  (nível ' + res.nivel + ')' : '');
     let detalle = 'Fichas: ' + res.fichasTotal +
       '  (mão ' + res.fichasBase + ' + cartas ' + res.fichasCartas +
       (res.fichasExtra ? ' + extras ' + res.fichasExtra : '') + ')\n' +
@@ -785,8 +783,11 @@
   /* ---------- Roleta do Caos ---------- */
   const LARGURA_SEGMENTO = 84;
 
+  let roletaGirando = false;
+
   function montarTira() {
-    // Monta 3 cópias da roleta para garantir deslocamento contínuo
+    // Monta 3 cópias da roleta: o prêmio sorteado cai sempre na cópia do MEIO,
+    // então há uma cópia inteira antes e outra depois (nunca sai da tira).
     const tira = $('tira-ruleta');
     tira.innerHTML = '';
     const tripla = LOGICA.ROLETA.concat(LOGICA.ROLETA, LOGICA.ROLETA);
@@ -799,75 +800,50 @@
       el.setAttribute('data-id', seg.id);
       tira.appendChild(el);
     });
-    // Largura total fixa
+    // Largura total fixa + reset absoluto (padrão Antigravity, provado no WebView)
     tira.style.width = (tripla.length * LARGURA_SEGMENTO) + 'px';
+    tira.style.transition = 'none';
+    tira.style.transform = 'translateX(0px)';
   }
 
   function mostrarRuleta() {
     montarTira();
-    // Centraliza a roleta na pista ANTES de mostrar (evita medição com 0)
-    $('overlay-ruleta').classList.remove('oculta');
-    const pistaAncho = $('pista-ruleta').clientWidth ||
-      Math.max(280, (window.innerWidth || 360) - 40);
-    const compensa = -(LOGICA.ROLETA.length * LARGURA_SEGMENTO) +
-      (pistaAncho - LARGURA_SEGMENTO) / 2;
-    const tira = $('tira-ruleta');
-    tira.style.transition = 'none';
-    tira.style.transform = 'translateX(' + compensa + 'px)';
-    $('ruleta-resultado').textContent = '';
+    $('ruleta-resultado').classList.add('oculta');
     $('btn-girar').classList.remove('oculta');
     $('btn-girar').disabled = false;
     $('btn-fechar-ruleta').classList.add('oculta');
+    $('overlay-ruleta').classList.remove('oculta');
   }
 
   function girarRuleta() {
+    if (roletaGirando) return;
+    roletaGirando = true;
     const tira = $('tira-ruleta');
     const indice = aleatorio(0, LOGICA.ROLETA.length - 1);
-    // O alvo visual fica na 2ª cópia da roleta (centralizada)
-    const alvoVisual = LOGICA.ROLETA.length + indice;
-    const pistaAncho = $('pista-ruleta').clientWidth ||
-      Math.max(280, (window.innerWidth || 360) - 40);
-    const rotações = aleatorio(2, 4) * LOGICA.ROLETA.length;
-    const dest = -(alvoVisual * LARGURA_SEGMENTO + LARGURA_SEGMENTO / 2 - pistaAncho / 2) -
-      rotações * LARGURA_SEGMENTO;
+    // O prêmio sorteado fica na cópia do MEIO da tira
+    const segmentoDestino = LOGICA.ROLETA.length + indice;
+    // O centro do segmento destino (segmentoDestino*84 + 42) deve alinhar com
+    // o centro do viewbox (126px): deslocamento = -((segmentoDestino - 1) * 84)
+    const deslocamentoFinal = -((segmentoDestino - 1) * LARGURA_SEGMENTO);
 
     $('btn-girar').disabled = true;
     Som.ruleta();
 
-    // Usa CSS transition (mais confiável que rAF manual em WebViews)
-    tira.style.transition = 'transform 3.4s cubic-bezier(0.15, 0.85, 0.25, 1)';
-    tira.style.transform = 'translateX(' + dest + 'px)';
+    // UMA única CSS transition em transform — a técnica que o WebView do
+    // celular anima de forma confiável (padrão Antigravity, sem rAF)
+    tira.style.transition = 'transform 3.4s cubic-bezier(0.15, 0.9, 0.25, 1)';
+    tira.style.transform = 'translateX(' + deslocamentoFinal + 'px)';
 
-    // Fallback: se a transition não disparar (WebView antigo), forçar por rAF
-    let concluido = false;
-    const inicio = Date.now();
-    function quadro() {
-      const t = (Date.now() - inicio) / 3400;
-      if (t >= 1 && !concluido) {
-        concluido = true;
-        finalizarRuleta();
-      } else if (t < 1) {
-        requestAnimationFrame(quadro);
-      }
-    }
-    // Espera 3.6s (tempo da transition) e finaliza
     setTimeout(function () {
-      if (!concluido) {
-        concluido = true;
-        finalizarRuleta();
-      }
-    }, 3600);
-    // Fallback rAF para navegadores que não animam CSS transition
-    requestAnimationFrame(quadro);
-
-    function finalizarRuleta() {
       const r = LOGICA.ROLETA[indice];
       aplicarRoleta(r);
-      $('ruleta-resultado').innerHTML =
-        '<b>' + r.icone + ' ' + r.nome + '</b><br><span class="ruleta-legenda">' + r.desc + '</span>';
+      $('ruleta-resultado-nome').textContent = r.icone + ' ' + r.nome;
+      $('ruleta-resultado-legenda').textContent = r.desc;
+      $('ruleta-resultado').classList.remove('oculta');
       $('btn-girar').classList.add('oculta');
       $('btn-fechar-ruleta').classList.remove('oculta');
-    }
+      roletaGirando = false;
+    }, 3600);
   }
 
   function aplicarRoleta(r) {
@@ -1218,6 +1194,17 @@
 
     // Mini board de mãos
     renderizarMiniBoard();
+    $('btn-karma').addEventListener('click', function () {
+      if (!modoChara || !E) return;
+      const alvoK = E.alvoEfetivo || jefeAtual().alvo;
+      if (E.pontos >= alvoK) return;
+      const delta = alvoK - E.pontos;
+      E.pontos += delta;
+      E.pontosTotales += delta;
+      renderizarJuego();
+      danoNoChefe(delta);
+      setTimeout(function () { ganarBlind(); }, 900);
+    });
     $('btn-panel-manos').addEventListener('click', function () {
       renderizarMiniBoard();
       $('overlay-manos').classList.remove('oculta');

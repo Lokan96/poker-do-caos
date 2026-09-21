@@ -54,7 +54,7 @@ Cada etapa está detalhada em `relatorio.md` (versão entregue: `relatorio.docx`
 - **Economia de boteco**: juros do caixa (+$1 por $10 guardados) e custo de nível progressivo ($2 + $1 a cada 2 níveis);
 - **4 espaços de Coringa**: +2 espaços compráveis na loja por $10 (estilo voucher do Balatro);
 - **Níveis de mão**: comprar na loja ou jogar a mão sobe o nível da combinação (+10 fichas, +1 ×mult) — builds aceleradas no espírito do *Balatro*;
-- **Modo CHARA (teste)**: digite `chara` no campo de nome para um modo de depuração com 5 cheats (Determinação, Karma, Temmie, Muffet, O Vazio) — isola sistemas para testar no celular, sem gravar recordes nem desbloqueios;
+- **Modo CHARA (teste)**: digite `chara` no campo de nome para um modo de depuração com 4 cheats — Determinação (imortal), botão 🔪 KARMA (dano total no chefão pelo fluxo visual completo), Temmie (dinheiro infinito) e Muffet (descartes infinitos) — isola sistemas para testar no celular, sem gravar recordes nem desbloqueios;
 - **Interface mobile-first**: botões fixos no rodapé, alvos de toque ≥44 px, mini board "📖 Mãos" com a hierarquia das combinações, painel de Coringas ativos;
 - **Loja**: Coringas, cartas melhoradas (Ouro, Fogo, Biônica, Espelho) e upgrade de mãos;
 - **Roleta do Caos** com 6 prêmios aleatórios após cada vitória;
@@ -76,7 +76,7 @@ flowchart LR
     subgraph FERR["pasta tools/ — testes e simulações"]
         T1["test_logica.js<br/>78 testes"]
         T2["chequear_ids.js<br/>confere os identificadores"]
-        T3["smoke_jsdom.js<br/>22 checagens de tela"]
+        T3["smoke_jsdom.js<br/>24 checagens de tela"]
         T4["simular_partida.js<br/>200 partidas simuladas"]
     end
     subgraph AND["pasta android/ — projeto nativo"]
@@ -104,7 +104,7 @@ trab_2bi/
 ├── tools/                      # FERRAMENTAS (não entram no APK)
 │   ├── test_logica.js          # 78 testes unitários da lógica pura
 │   ├── chequear_ids.js         # Valida que todo ID usado no JS existe no HTML
-│   ├── smoke_jsdom.js          # 22 verificações de interface simulada (jsdom)
+│   ├── smoke_jsdom.js          # 24 verificações de interface simulada (jsdom)
 │   ├── simular_partida.js      # Simulador Monte Carlo (200 partidas) p/ balanceamento
 │   └── generar_iconos.py       # Gera os ícones Android/PWA (Pillow)
 ├── android/                    # Projeto nativo Android (Capacitor)
@@ -130,7 +130,7 @@ Isso permite **testar o jogo de verdade** sem abrir navegador:
 
 | Comando | O que faz |
 |---|---|
-| `npm test` | 78 testes unitários + validação de IDs + 22 verificações de interface (jsdom) |
+| `npm test` | 78 testes unitários + validação de IDs + 24 verificações de interface (jsdom) |
 | `npm run simular` | Simula 200 partidas com jogadores aleatórios e mostra a taxa de vitória |
 | `npm run apk:local` | Sincroniza e compila o APK localmente (requer Android SDK) |
 
@@ -181,7 +181,7 @@ O APK é compilado **automaticamente** pelo GitHub Actions em dois momentos:
 
 ### Baixar o APK pronto (Release)
 
-- **Versão atual: [v0.4.0](https://github.com/Lokan96/poker-do-caos/releases/tag/v0.4.0)** — arquivo `app-debug.apk` (~4 MB): contém o balanceamento do Ato 2, os Atos 3/4 (sequências curtas, Coringas trade-off, modo CHARA) e aparece como versão "4.0" nas configurações do Android;
+- **Versão atual: [v0.4.0](https://github.com/Lokan96/poker-do-caos/releases/tag/v0.4.1)** — arquivo `app-debug.apk` (~4 MB): contém o balanceamento do Ato 2, os Atos 3/4 (sequências curtas, Coringas trade-off, modo CHARA) e aparece como versão "4.0" nas configurações do Android;
 - Na página da Release, clique em `app-debug.apk` para baixar;
 - Instale no Android permitindo "fontes desconhecidas" — funciona offline.
 
@@ -254,4 +254,4 @@ No primeiro teste no celular apareceu um **problema real**: os prêmios da rolet
 
 Projeto escolar da disciplina de Desenvolvimento de Sistemas — atividade "Meu Primeiro Aplicativo Autônomo". O relatório completo está em `relatorio.md` (versão editável) e `relatorio.docx` (entrega).
 
-APK instalável publicado permanentemente na [Release v0.4.0](https://github.com/Lokan96/poker-do-caos/releases/tag/v0.4.0) — e a cada etiqueta nova (`v0.5.0`, ...) o fluxo publica a versão seguinte sozinho.
+APK instalável publicado permanentemente na [Release v0.4.0](https://github.com/Lokan96/poker-do-caos/releases/tag/v0.4.1) — e a cada etiqueta nova (`v0.5.0`, ...) o fluxo publica a versão seguinte sozinho.

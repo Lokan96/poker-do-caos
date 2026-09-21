@@ -368,6 +368,14 @@ Antes da publicação, uma limpeza final de consistência:
 - Versão nativa elevada para `versionCode 4` / `versionName "4.0"` e projeto Android ressincronizado (`npx cap sync`);
 - Revalidação completa: **78 testes unitários, 0 falhas · 22/22 verificações de interface · 0 IDs em falta**.
 
+### 18.7 Correções pós-release (v0.4.1)
+Jogando a v0.4.0 de verdade no celular, três problemas apareceram e foram resolvidos:
+- **"undefined" no overlay**: o nome da mão exibido vinha do campo errado (`res.mao.nome` em vez de `res.mao.nombre`) — toda mão jogada mostrava "undefined". Corrigido e coberto por verificação de interface;
+- **Roleta reescrita com o padrão do Antigravity**: o giro antigo somava voltas extras além do fim da tira (o deslocamento chegava a -2.400px numa tira de 1.512px — no celular a pista ficava vazia). O novo desenho usa o layout provado: viewbox de largura fixa (252px), tira no fluxo normal (sem `position: absolute`) e **uma única transição CSS em `transform`**, com o prêmio sempre na cópia do meio da tira;
+- **Modo CHARA revisado**: o cheat Karma virou um **botão "🔪 KARMA — DANO TOTAL"** (aplica o dano pelo fluxo visual completo — número flutuante, frame de dor e barra de vida — e segue para a roleta/loja, permitindo analisar a luta); o cheat **O Vazio foi removido** (abolia os alvos e impedia testar a dificuldade real). Ficaram 4 cheats: Determinação, Karma (botão), Temmie e Muffet.
+
+**Validação da v0.4.1:** testes unitários 0 falhas · **24 verificações de interface** (2 novas: nome da mão sem "undefined" e botão KARMA oculto fora do CHARA) · 0 IDs em falta · sonda jsdom confirmou mão "Par" no overlay, KARMA aplicando 300/300 de dano e a roleta girando até `-504px` com prêmio + legenda.
+
 
 
 
