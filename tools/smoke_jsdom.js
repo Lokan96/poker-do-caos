@@ -156,6 +156,8 @@ async function run() {
     if (!btnFecharRuleta.classList.contains('oculta')) btnFecharRuleta.click();
     await esperar(30);
     verificar('Loja visível após roleta', !doc.getElementById('pantalla-tienda').classList.contains('oculta'));
+    verificar('Barra de ações oculta na loja (bug corrigido)',
+      doc.getElementById('barra-acciones').classList.contains('oculta'));
 
     // 8) Continua para o próximo chefão
     doc.getElementById('btn-continuar').click();

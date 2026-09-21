@@ -124,6 +124,14 @@ function baralhoLimpo() {
   // Quase sequência (5-6-8): NÃO é sequência
   mao = L.avaliarMao([carta(3, 0), carta(4, 1), carta(6, 2)]);
   verificar('5-6-8 NÃO é sequência', mao.clave !== 'escalera', mao.clave);
+
+  // Royal Flush e carta duplicada (v0.4.2)
+  mao = L.avaliarMao([carta(8, 0), carta(9, 0), carta(10, 0), carta(11, 0), carta(12, 0)]);
+  verificar('Royal Flush reconhecido', mao.clave === 'escaleraReal', mao.clave);
+  mao = L.avaliarMao([carta(3, 1), carta(4, 1), carta(5, 1), carta(6, 1), carta(7, 1)]);
+  verificar('Sequência de Cor com 5 cartas', mao.clave === 'escaleraDeCor', mao.clave);
+  mao = L.avaliarMao([carta(8, 2), carta(8, 2), carta(9, 2), carta(10, 2), carta(11, 2)]);
+  verificar('Carta duplicada impede Royal (fica Cor)', mao.clave === 'cor', mao.clave);
 })();
 
 /* ------------------------------------------------------------------

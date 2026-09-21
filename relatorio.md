@@ -376,6 +376,15 @@ Jogando a v0.4.0 de verdade no celular, três problemas apareceram e foram resol
 
 **Validação da v0.4.1:** testes unitários 0 falhas · **24 verificações de interface** (2 novas: nome da mão sem "undefined" e botão KARMA oculto fora do CHARA) · 0 IDs em falta · sonda jsdom confirmou mão "Par" no overlay, KARMA aplicando 300/300 de dano e a roleta girando até `-504px` com prêmio + legenda.
 
+### 18.8 Correções pós-release (v0.4.2)
+Três problemas reportados após jogar a v0.4.1 no celular:
+- **Modo CHARA gravava recordes**: os contadores eram alterados em memória (partidas, chefões vencidos, melhor pontuação, coringas coletados) mesmo com a gravação bloqueada — o valor poluído vazava para a próxima partida normal. Guardas aplicados nos 5 pontos de alteração;
+- **Barra de ações fixa aparecia na loja**: o rodapé (JOGAR MÃO/DESCARTAR/ORDENAR) fica fora das telas no HTML e era sempre visível. Agora o `mostrarPantalla` o esconde fora da tela de jogo; e, no modo CHARA, o botão KARMA **limpa a seleção de cartas** ao aplicar o dano — era isso que permitia "jogar a mão na loja" e vencer o chefão de novo;
+- **Royal Flush**: investigado com teste direto no avaliador — **funciona corretamente** (`10♠ J♠ Q♠ K♠ A♠` → Royal Flush, inclusive contra o chefão Baralho Sujo). Adicionados 3 testes unitários (Royal, Sequência de Cor com 5 cartas e o caso de carta duplicada: duas cópias do 10 **não** formam Royal, fica Cor).
+
+**Validação da v0.4.2:** 81 testes unitários, 0 falhas (3 novos) · 25 verificações de interface (1 nova: barra oculta na loja) · sonda jsdom confirmou: partida CHARA inteira **sem gravar nada no localStorage**, barra oculta na loja, tentativa de jogar na loja ignorada e barra de volta no jogo.
+
+
 
 
 

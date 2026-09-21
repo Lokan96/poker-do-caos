@@ -19,6 +19,8 @@
     ocultarPantallas();
     const p = $(id);
     p.classList.remove('oculta');
+    const barra = $('barra-acciones');
+    if (barra) barra.classList.toggle('oculta', id !== 'pantalla-juego');
     try { window.scrollTo(0, 0); } catch (e) { /* ambientes sem scroll */ }
     return p;
   };
@@ -226,9 +228,9 @@
     E.dinheiro = desbloqueios.clientela ? 8 : 6;
     E.ronda = 0;
     E.pontosTotales = 0;
-    records.partidas++;
+    if (!modoChara) records.partidas++;
     if (modoChara) {
-      // cheats: dinheiro fixado em alto + os 5 coringas cheats na fileira
+      // cheats: dinheiro fixado em alto + os 4 coringas cheats na fileira
       E.dinheiro = 99;
       CORINGAS_CHEAT().forEach(function (c) { E.coringas.push(Object.assign({}, c)); });
       mostrarToast('👻 MODO CHARA — imortal, rico e com cheats. *Fique determinado.*');
@@ -374,6 +376,8 @@
      ------------------------------------------------------------------ */
   function jogarMao() {
     if (!E || E.manos <= 0) return;
+    const telaJ = $('pantalla-juego');
+    if (!telaJ || telaJ.classList.contains('oculta')) return;
     const cartas = E.manoJuego.filter(function (c) { return E.seleccionIds.has(c.id); });
     if (cartas.length < 1 || cartas.length > 5) return;
 
@@ -714,6 +718,8 @@
      ------------------------------------------------------------------ */
   function descartar() {
     if (!E) return;
+    const telaD = $('pantalla-juego');
+    if (!telaD || telaD.classList.contains('oculta')) return;
     const infinito = temCheat('cheatMuffet');
     if (!infinito && E.descartes <= 0) return;
     const cartas = E.manoJuego.filter(function (c) { return E.seleccionIds.has(c.id); });
@@ -769,8 +775,10 @@
       if (E.ronda === 5) desbloquear('colecionador');
     }
 
-    records.chefesVencidos = Math.max(records.chefesVencidos, E.ronda + 1);
-    records.melhorPuntaje = Math.max(records.melhorPuntaje, E.pontosTotales);
+    if (!modoChara) {
+      records.chefesVencidos = Math.max(records.chefesVencidos, E.ronda + 1);
+      records.melhorPuntaje = Math.max(records.melhorPuntaje, E.pontosTotales);
+    }
     guardarRecords();
 
     Som.ganar();
@@ -857,7 +865,7 @@
       case 'coringaGratis':
         if (slotsLivre() > 0) {
           E.coringas.push(Object.assign({}, escoger(poolCoringas())));
-          records.coringasTotales++;
+          if (!modoChara) records.coringasTotales++;
         } else {
           E.dinheiro += 5;
         }
@@ -1023,7 +1031,7 @@
     if (E.dinheiro < oferta.preco || slotsLivre() <= 0) return;
     E.dinheiro -= oferta.preco;
     E.coringas.push(oferta);
-    records.coringasTotales++;
+    if (!modoChara) records.coringasTotales++;
     guardarRecords();
     Som.comprar();
     renderizarTienda();
@@ -1073,8 +1081,10 @@
 
   function mostrarVictoria() {
     if (!modoChara) desbloquear('coroa');
-    records.chefesVencidos = 8;
-    records.melhorPuntaje = Math.max(records.melhorPuntaje, E.pontosTotales);
+    if (!modoChara) {
+      records.chefesVencidos = 8;
+      records.melhorPuntaje = Math.max(records.melhorPuntaje, E.pontosTotales);
+    }
     guardarRecords();
     Som.ganar();
     capaConfeti();
@@ -1201,6 +1211,7 @@
       const delta = alvoK - E.pontos;
       E.pontos += delta;
       E.pontosTotales += delta;
+      E.seleccionIds = new Set();
       renderizarJuego();
       danoNoChefe(delta);
       setTimeout(function () { ganarBlind(); }, 900);
